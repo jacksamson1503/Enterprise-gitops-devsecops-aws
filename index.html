@@ -1,0 +1,1723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KILN & CLAY — Handcrafted Stoneware for Everyday Living</title>
+  <meta name="description" content="Hand-thrown stoneware ceramics and architectural tabletop goods produced in small studio batches. Built for kitchen and table.">
+  <meta property="og:title" content="KILN & CLAY — Handcrafted Stoneware">
+  <meta property="og:description" content="Small-batch ceramics built for utility and everyday rituals.">
+  <meta property="og:type" content="website">
+
+  <!-- Google Fonts: Fraunces (Display) & Plus Jakarta Sans (Body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* CSS RESETS & DESIGN SYSTEM VARIABLES */
+    :root {
+      /* Colors */
+      --color-primary: #9E472A;
+      --color-primary-hover: #833920;
+      --color-accent: #4B5842;
+      --color-accent-hover: #3D4836;
+      --color-bg: #FAF8F5;
+      --color-surface: #FFFFFF;
+      --color-sand: #F2ECE4;
+      --color-border: #E0D8CE;
+      --color-text-primary: #242220;
+      --color-text-secondary: #6E6A64;
+      --color-error: #B92E2E;
+      --color-success: #2E7D32;
+
+      /* Typography */
+      --font-display: 'Fraunces', Georgia, serif;
+      --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+
+      /* Spacing Scale (8px Grid) */
+      --space-2: 8px;
+      --space-3: 12px;
+      --space-4: 16px;
+      --space-5: 24px;
+      --space-6: 32px;
+      --space-8: 48px;
+      --space-10: 64px;
+      --space-12: 96px;
+
+      /* Borders & Shadows */
+      --radius: 4px;
+      --radius-sm: 2px;
+      --border-thin: 1px solid var(--color-border);
+      --shadow-subtle: 0 4px 12px rgba(36, 34, 32, 0.05);
+      --shadow-drawer: -6px 0 24px rgba(36, 34, 32, 0.12);
+      --transition-fast: 160ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--color-bg);
+      color: var(--color-text-primary);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Focus States for Accessibility */
+    a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+    }
+
+    /* TYPOGRAPHY */
+    h1, h2, h3, h4 {
+      font-family: var(--font-display);
+      font-weight: 600;
+      color: var(--color-text-primary);
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+    }
+
+    h1 { font-size: clamp(2.2rem, 4vw, 3.5rem); }
+    h2 { font-size: clamp(1.6rem, 2.5vw, 2.2rem); }
+    h3 { font-size: 1.25rem; }
+    p { color: var(--color-text-secondary); }
+
+    /* LAYOUT UTILITIES */
+    .container {
+      width: 100%;
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 var(--space-4);
+    }
+
+    /* HEADER & NAVIGATION */
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background-color: rgba(250, 248, 245, 0.94);
+      backdrop-filter: blur(8px);
+      border-bottom: var(--border-thin);
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 72px;
+    }
+
+    .brand-mark {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      text-decoration: none;
+      color: var(--color-text-primary);
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+
+    .brand-mark span {
+      color: var(--color-primary);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: var(--space-6);
+      list-style: none;
+    }
+
+    .nav-btn {
+      background: none;
+      border: none;
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--color-text-primary);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      transition: color var(--transition-fast);
+    }
+
+    .nav-btn:hover {
+      color: var(--color-primary);
+    }
+
+    .nav-btn.active-tab {
+      color: var(--color-primary);
+      font-weight: 600;
+      border-bottom: 2px solid var(--color-primary);
+      border-radius: 0;
+    }
+
+    .cart-badge {
+      background-color: var(--color-primary);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      min-width: 20px;
+      height: 20px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+    }
+
+    /* GLOBAL BUTTONS */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 12px 24px;
+      border-radius: var(--radius);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background-color: var(--color-primary);
+      color: #FFFFFF;
+    }
+    .btn-primary:hover {
+      background-color: var(--color-primary-hover);
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      border: 1px solid var(--color-border);
+      color: var(--color-text-primary);
+    }
+    .btn-secondary:hover {
+      background-color: var(--color-sand);
+      border-color: var(--color-text-secondary);
+    }
+
+    .btn-accent {
+      background-color: var(--color-accent);
+      color: #FFFFFF;
+    }
+    .btn-accent:hover {
+      background-color: var(--color-accent-hover);
+    }
+
+    .btn-sm {
+      padding: 8px 14px;
+      font-size: 0.85rem;
+    }
+
+    .btn-block {
+      width: 100%;
+    }
+
+    /* DEMO BADGE BANNER */
+    .demo-bar {
+      background-color: var(--color-sand);
+      border-bottom: var(--border-thin);
+      font-size: 0.8rem;
+      color: var(--color-text-secondary);
+      text-align: center;
+      padding: 6px var(--space-4);
+    }
+
+    /* ASYMMETRIC HERO SECTION */
+    .hero-section {
+      padding: var(--space-10) 0 var(--space-8);
+      border-bottom: var(--border-thin);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: var(--space-8);
+      align-items: center;
+    }
+
+    .hero-tag {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--color-accent);
+      font-weight: 700;
+      margin-bottom: var(--space-3);
+    }
+
+    .hero-lead {
+      font-size: 1.125rem;
+      margin: var(--space-4) 0 var(--space-6);
+      max-width: 520px;
+    }
+
+    .hero-visual-card {
+      background-color: var(--color-sand);
+      border: var(--border-thin);
+      padding: var(--space-6);
+      border-radius: var(--radius);
+      position: relative;
+    }
+
+    .hero-card-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-top: var(--space-4);
+      font-size: 0.85rem;
+      border-top: var(--border-thin);
+      padding-top: var(--space-3);
+    }
+
+    /* PRODUCT CATALOG SECTION */
+    .catalog-section {
+      padding: var(--space-10) 0;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: var(--space-8);
+      padding-bottom: var(--space-4);
+      border-bottom: var(--border-thin);
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: var(--space-6);
+    }
+
+    .product-card {
+      background: var(--color-surface);
+      border: var(--border-thin);
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+    .product-card:hover {
+      box-shadow: var(--shadow-subtle);
+    }
+
+    .product-thumb {
+      background-color: var(--color-sand);
+      aspect-ratio: 4 / 3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-4);
+      position: relative;
+      border-bottom: var(--border-thin);
+    }
+
+    .product-info {
+      padding: var(--space-5);
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .product-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: var(--space-2);
+    }
+
+    .product-price {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+
+    .product-desc {
+      font-size: 0.9rem;
+      margin-bottom: var(--space-5);
+      flex-grow: 1;
+    }
+
+    .product-card-actions {
+      display: flex;
+      gap: var(--space-2);
+    }
+
+    /* PRODUCT DETAIL MODAL / VIEW */
+    .detail-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(36, 34, 32, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 50;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-4);
+    }
+
+    .detail-overlay.active {
+      display: flex;
+    }
+
+    .detail-modal {
+      background: var(--color-surface);
+      border: var(--border-thin);
+      border-radius: var(--radius);
+      width: 100%;
+      max-width: 820px;
+      max-height: 90vh;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      box-shadow: var(--shadow-drawer);
+    }
+
+    .detail-image-box {
+      background: var(--color-sand);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-6);
+      border-right: var(--border-thin);
+    }
+
+    .detail-content {
+      padding: var(--space-8);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .detail-specs {
+      margin: var(--space-4) 0 var(--space-6);
+      font-size: 0.85rem;
+      border-top: var(--border-thin);
+      border-bottom: var(--border-thin);
+      padding: var(--space-4) 0;
+    }
+
+    .spec-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    /* CART SLIDE-OUT DRAWER */
+    .cart-drawer-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(36, 34, 32, 0.4);
+      z-index: 60;
+      display: none;
+    }
+
+    .cart-drawer-backdrop.active {
+      display: block;
+    }
+
+    .cart-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      max-width: 440px;
+      background: var(--color-surface);
+      border-left: var(--border-thin);
+      box-shadow: var(--shadow-drawer);
+      display: flex;
+      flex-direction: column;
+      z-index: 70;
+      transform: translateX(100%);
+      transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .cart-drawer.active {
+      transform: translateX(0);
+    }
+
+    .drawer-header {
+      padding: var(--space-5);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: var(--border-thin);
+    }
+
+    .drawer-items {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: var(--space-5);
+    }
+
+    .cart-item {
+      display: grid;
+      grid-template-columns: 64px 1fr auto;
+      gap: var(--space-3);
+      align-items: center;
+      margin-bottom: var(--space-4);
+      padding-bottom: var(--space-4);
+      border-bottom: var(--border-thin);
+    }
+
+    .cart-item-img {
+      width: 64px;
+      height: 64px;
+      background: var(--color-sand);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .qty-controls {
+      display: inline-flex;
+      align-items: center;
+      border: var(--border-thin);
+      border-radius: var(--radius-sm);
+      margin-top: 6px;
+    }
+
+    .qty-btn {
+      background: none;
+      border: none;
+      width: 24px;
+      height: 24px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .qty-num {
+      padding: 0 8px;
+      font-size: 0.85rem;
+    }
+
+    .drawer-footer {
+      padding: var(--space-5);
+      border-top: var(--border-thin);
+      background: var(--color-bg);
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: var(--space-2);
+      font-size: 0.95rem;
+    }
+
+    .summary-total {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      margin-top: var(--space-3);
+      padding-top: var(--space-3);
+      border-top: var(--border-thin);
+    }
+
+    /* FULL PAGE VIEWS (CHECKOUT, PAYMENT, CONFIRMATION, ADMIN, LOGIN) */
+    .view-container {
+      display: none;
+      padding: var(--space-10) 0;
+      min-height: 70vh;
+    }
+
+    .view-container.active-view {
+      display: block;
+    }
+
+    .form-card {
+      background: var(--color-surface);
+      border: var(--border-thin);
+      border-radius: var(--radius);
+      padding: var(--space-8);
+      max-width: 640px;
+      margin: 0 auto;
+      box-shadow: var(--shadow-subtle);
+    }
+
+    .stepper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: 540px;
+      margin: 0 auto var(--space-8);
+      position: relative;
+    }
+
+    .step-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+    }
+
+    .step-item.current {
+      color: var(--color-primary);
+    }
+
+    .step-number {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 1px solid currentColor;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+    }
+
+    .step-item.current .step-number {
+      background-color: var(--color-primary);
+      color: #FFFFFF;
+      border-color: var(--color-primary);
+    }
+
+    .form-group {
+      margin-bottom: var(--space-4);
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-4);
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: 6px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="tel"],
+    select {
+      width: 100%;
+      padding: 10px 14px;
+      border: var(--border-thin);
+      border-radius: var(--radius);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      background: var(--color-bg);
+      color: var(--color-text-primary);
+      transition: border-color var(--transition-fast);
+    }
+
+    input:focus, select:focus {
+      border-color: var(--color-primary);
+      background: #FFFFFF;
+    }
+
+    .input-hint {
+      font-size: 0.75rem;
+      color: var(--color-text-secondary);
+      margin-top: 4px;
+    }
+
+    /* CONFIRMATION CARD */
+    .receipt-card {
+      background: var(--color-surface);
+      border: var(--border-thin);
+      border-radius: var(--radius);
+      max-width: 620px;
+      margin: 0 auto;
+      padding: var(--space-8);
+      text-align: center;
+    }
+
+    .receipt-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      background: var(--color-sand);
+      color: var(--color-accent);
+      border-radius: 50%;
+      margin-bottom: var(--space-4);
+    }
+
+    .receipt-details {
+      text-align: left;
+      background: var(--color-bg);
+      border: var(--border-thin);
+      padding: var(--space-5);
+      border-radius: var(--radius);
+      margin: var(--space-6) 0;
+      font-size: 0.9rem;
+    }
+
+    /* ADMIN DASHBOARD */
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-6);
+      padding-bottom: var(--space-4);
+      border-bottom: var(--border-thin);
+    }
+
+    .admin-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-4);
+      margin-bottom: var(--space-8);
+    }
+
+    .metric-card {
+      background: var(--color-surface);
+      border: var(--border-thin);
+      padding: var(--space-5);
+      border-radius: var(--radius);
+    }
+
+    .metric-value {
+      font-family: var(--font-display);
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--color-primary);
+      margin-top: 4px;
+    }
+
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--color-surface);
+      border: var(--border-thin);
+      border-radius: var(--radius);
+      overflow: hidden;
+      font-size: 0.9rem;
+    }
+
+    .admin-table th, .admin-table td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: var(--border-thin);
+    }
+
+    .admin-table th {
+      background: var(--color-sand);
+      font-weight: 600;
+      color: var(--color-text-secondary);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .status-pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background-color: var(--color-sand);
+      color: var(--color-text-primary);
+    }
+    .status-pill.paid {
+      background: #E8F5E9;
+      color: var(--color-success);
+    }
+
+    /* FOOTER */
+    .site-footer {
+      margin-top: auto;
+      background: var(--color-surface);
+      border-top: var(--border-thin);
+      padding: var(--space-10) 0 var(--space-6);
+      font-size: 0.9rem;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: var(--space-8);
+      margin-bottom: var(--space-8);
+    }
+
+    .footer-bottom {
+      border-top: var(--border-thin);
+      padding-top: var(--space-6);
+      display: flex;
+      justify-content: space-between;
+      color: var(--color-text-secondary);
+      font-size: 0.8rem;
+    }
+
+    /* RESPONSIVE DESIGN BREAKPOINTS */
+    @media (max-width: 900px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .detail-modal { grid-template-columns: 1fr; }
+      .detail-image-box { border-right: none; border-bottom: var(--border-thin); }
+      .admin-metrics { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; gap: var(--space-6); }
+    }
+
+    @media (max-width: 600px) {
+      .form-row { grid-template-columns: 1fr; }
+      .product-grid { grid-template-columns: 1fr; }
+      .header-inner { height: 64px; }
+      .nav-links { gap: var(--space-3); }
+      .nav-btn { font-size: 0.85rem; padding: 4px 6px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- DEMO NOTIFICATION BAR -->
+  <aside class="demo-bar" aria-label="Demo notice">
+    Interactive Prototype — All payments and logins operate in client simulation mode without live card charges.
+  </aside>
+
+  <!-- SITE HEADER / NAVIGATION -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#storefront" class="brand-mark" onclick="app.showView('storefront'); return false;" aria-label="KILN and CLAY Homepage">
+        KILN <span>&</span> CLAY
+      </a>
+
+      <nav aria-label="Main Navigation">
+        <ul class="nav-links">
+          <li>
+            <button type="button" class="nav-btn active-tab" id="navStorefront" onclick="app.showView('storefront')">
+              Storefront
+            </button>
+          </li>
+          <li>
+            <button type="button" class="nav-btn" id="navAdmin" onclick="app.showView('admin')">
+              Admin Portal
+            </button>
+          </li>
+          <li>
+            <button type="button" class="nav-btn" id="navAccount" onclick="app.openAuthModal()">
+              <span id="accountNavLabel">Sign In</span>
+            </button>
+          </li>
+          <li>
+            <button type="button" class="nav-btn" aria-label="View shopping bag" onclick="app.toggleCart(true)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+              <span>Cart</span>
+              <span class="cart-badge" id="cartCountBadge" aria-live="polite">0</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="mainContent">
+
+    <!-- VIEW 1: STOREFRONT & CATALOG -->
+    <section id="viewStorefront" class="view-container active-view" aria-labelledby="heroTitle">
+      <div class="container">
+        
+        <!-- EDITORIAL ASYMMETRIC HERO -->
+        <header class="hero-section">
+          <div class="hero-grid">
+            <div>
+              <p class="hero-tag">Batch 14 Studio Release</p>
+              <h1 id="heroTitle">Hand-thrown stoneware for daily rituals</h1>
+              <p class="hero-lead">
+                Formed on the kick-wheel from iron-rich local clay. Fired to Cone 10 for raw durability, chip resistance, and tactile kitchen utility.
+              </p>
+              <div style="display: flex; gap: var(--space-4);">
+                <a href="#catalog" class="btn btn-primary">Browse Catalogue</a>
+                <button type="button" class="btn btn-secondary" onclick="app.openDetail('carafe')">Featured Vessel</button>
+              </div>
+            </div>
+
+            <div class="hero-visual-card">
+              <!-- Inline Handcrafted Vessel SVG Drawing -->
+              <svg viewBox="0 0 320 220" width="100%" height="auto" role="img" aria-label="Illustration of studio ceramic carafe and cup" style="display: block;">
+                <rect width="320" height="220" fill="#F2ECE4"/>
+                <ellipse cx="160" cy="195" rx="100" ry="8" fill="#E0D8CE"/>
+                <!-- Pitcher / Carafe -->
+                <path d="M120 70 L140 190 L180 190 L200 70 Z" fill="#9E472A" opacity="0.95"/>
+                <path d="M115 70 Q160 80 205 70 Q160 60 115 70" fill="#833920"/>
+                <path d="M190 90 Q225 125 178 165" fill="none" stroke="#9E472A" stroke-width="8" stroke-linecap="round"/>
+                <!-- Small Tasting Cup -->
+                <path d="M70 145 L78 190 L108 190 L115 145 Z" fill="#4B5842"/>
+                <ellipse cx="92.5" cy="145" rx="22.5" ry="4" fill="#3D4836"/>
+              </svg>
+              <div class="hero-card-meta">
+                <span>Cone 10 Reduction Fired</span>
+                <strong>Studio Certified Dishwasher Safe</strong>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- PRODUCT CATALOG -->
+        <section class="catalog-section" id="catalog" aria-labelledby="catalogHeading">
+          <div class="section-header">
+            <div>
+              <h2 id="catalogHeading">Studio Ceramics Catalogue</h2>
+              <p>Individual pieces thrown, trimmed, and glazed in our single-origin kiln.</p>
+            </div>
+            <span style="font-size: 0.85rem; color: var(--color-text-secondary);">4 Active Vessels</span>
+          </div>
+
+          <div class="product-grid" id="productGridContainer">
+            <!-- Dynamically injected via JavaScript -->
+          </div>
+        </section>
+
+      </div>
+    </section>
+
+    <!-- VIEW 2: CHECKOUT (SHIPPING INTAKE) -->
+    <section id="viewCheckout" class="view-container" aria-labelledby="checkoutHeading">
+      <div class="container">
+        
+        <div class="stepper" aria-label="Order progress">
+          <div class="step-item current">
+            <span class="step-number">1</span>
+            <span>Delivery</span>
+          </div>
+          <div style="flex-grow: 1; height: 1px; background: var(--color-border); margin: 0 12px;"></div>
+          <div class="step-item">
+            <span class="step-number">2</span>
+            <span>Payment</span>
+          </div>
+          <div style="flex-grow: 1; height: 1px; background: var(--color-border); margin: 0 12px;"></div>
+          <div class="step-item">
+            <span class="step-number">3</span>
+            <span>Receipt</span>
+          </div>
+        </div>
+
+        <div class="form-card">
+          <h2 id="checkoutHeading" style="margin-bottom: var(--space-2);">Delivery Information</h2>
+          <p style="margin-bottom: var(--space-6);">Enter your physical shipping address for insured studio freight.</p>
+
+          <form id="shippingForm" onsubmit="app.handleShippingSubmit(event)">
+            <div class="form-group">
+              <label for="shipEmail">Email Address for Dispatch Notices</label>
+              <input type="email" id="shipEmail" required placeholder="name@domain.com">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="shipFirstName">First Name</label>
+                <input type="text" id="shipFirstName" required placeholder="Eleanor">
+              </div>
+              <div class="form-group">
+                <label for="shipLastName">Last Name</label>
+                <input type="text" id="shipLastName" required placeholder="Vance">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="shipAddress">Street Address</label>
+              <input type="text" id="shipAddress" required placeholder="148 Oakwood Studio Road">
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="shipCity">City</label>
+                <input type="text" id="shipCity" required placeholder="Portland">
+              </div>
+              <div class="form-group">
+                <label for="shipPostal">Postal Code</label>
+                <input type="text" id="shipPostal" required placeholder="97201">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="shipMethod">Dispatch Carrier</label>
+              <select id="shipMethod">
+                <option value="standard">Standard Carbon-Neutral Parcel (3-5 days) — Free</option>
+                <option value="express">Cratered Express Courier (1-2 days) — $15.00</option>
+              </select>
+            </div>
+
+            <div style="display: flex; gap: var(--space-4); margin-top: var(--space-6);">
+              <button type="button" class="btn btn-secondary" onclick="app.showView('storefront')">Return to Bag</button>
+              <button type="submit" class="btn btn-primary" style="flex-grow: 1;">Proceed to Payment</button>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- VIEW 3: PAYMENT PAGE -->
+    <section id="viewPayment" class="view-container" aria-labelledby="paymentHeading">
+      <div class="container">
+        
+        <div class="stepper" aria-label="Order progress">
+          <div class="step-item">
+            <span class="step-number">✓</span>
+            <span>Delivery</span>
+          </div>
+          <div style="flex-grow: 1; height: 1px; background: var(--color-primary); margin: 0 12px;"></div>
+          <div class="step-item current">
+            <span class="step-number">2</span>
+            <span>Payment</span>
+          </div>
+          <div style="flex-grow: 1; height: 1px; background: var(--color-border); margin: 0 12px;"></div>
+          <div class="step-item">
+            <span class="step-number">3</span>
+            <span>Receipt</span>
+          </div>
+        </div>
+
+        <div class="form-card">
+          <h2 id="paymentHeading" style="margin-bottom: var(--space-2);">Payment Details</h2>
+          <p style="margin-bottom: var(--space-6);">Secure sandbox transaction. Use any dummy card credentials below.</p>
+
+          <div style="background: var(--color-sand); padding: var(--space-4); border-radius: var(--radius); margin-bottom: var(--space-6); font-size: 0.85rem;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+              <span>Payable Total:</span>
+              <strong id="paymentPayableAmount">$0.00</strong>
+            </div>
+            <div style="display: flex; justify-content: space-between; color: var(--color-text-secondary);">
+              <span>Recipient:</span>
+              <span>KILN & CLAY Studio Ltd.</span>
+            </div>
+          </div>
+
+          <form id="paymentForm" onsubmit="app.handlePaymentSubmit(event)">
+            <div class="form-group">
+              <label for="cardName">Name on Card</label>
+              <input type="text" id="cardName" required placeholder="Eleanor Vance">
+            </div>
+
+            <div class="form-group">
+              <label for="cardNumber">Card Number</label>
+              <input type="text" id="cardNumber" required placeholder="4242 •••• •••• 4242" maxlength="19">
+              <span class="input-hint">Demo test card prefilled. Any 16 digits accepted.</span>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="cardExpiry">Expiration (MM/YY)</label>
+                <input type="text" id="cardExpiry" required placeholder="08/28" maxlength="5">
+              </div>
+              <div class="form-group">
+                <label for="cardCvc">CVC Code</label>
+                <input type="text" id="cardCvc" required placeholder="842" maxlength="4">
+              </div>
+            </div>
+
+            <div style="display: flex; gap: var(--space-4); margin-top: var(--space-6);">
+              <button type="button" class="btn btn-secondary" onclick="app.showView('checkout')">Back</button>
+              <button type="submit" class="btn btn-primary" id="payButton" style="flex-grow: 1;">
+                Confirm & Pay Order
+              </button>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- VIEW 4: CONFIRMATION PAGE -->
+    <section id="viewConfirmation" class="view-container" aria-labelledby="confirmHeading">
+      <div class="container">
+        
+        <div class="receipt-card">
+          <div class="receipt-badge" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+          </div>
+          <h2 id="confirmHeading">Studio Order Confirmed</h2>
+          <p style="margin-top: var(--space-2);">Thank you. Your ceramics have entered the packing bench.</p>
+
+          <div class="receipt-details">
+            <div class="summary-row">
+              <span>Order Number:</span>
+              <strong id="confirmOrderNumber">KC-0000</strong>
+            </div>
+            <div class="summary-row">
+              <span>Estimated Studio Dispatch:</span>
+              <strong>2 Business Days</strong>
+            </div>
+            <div class="summary-row">
+              <span>Shipping To:</span>
+              <span id="confirmShippingTo">[Name & Address]</span>
+            </div>
+            <div class="summary-row" style="margin-top: var(--space-4); border-top: var(--border-thin); padding-top: var(--space-3);">
+              <span>Billed Amount:</span>
+              <strong id="confirmAmountPaid">$0.00</strong>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: var(--space-4); justify-content: center;">
+            <button type="button" class="btn btn-primary" onclick="app.showView('storefront')">Return to Catalogue</button>
+            <button type="button" class="btn btn-secondary" onclick="app.showView('admin')">Inspect in Admin</button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- VIEW 5: ADMIN DASHBOARD -->
+    <section id="viewAdmin" class="view-container" aria-labelledby="adminHeading">
+      <div class="container">
+        
+        <div class="admin-header">
+          <div>
+            <h2 id="adminHeading">Kiln & Workshop Management</h2>
+            <p>Live inventory records and customer order fulfillments.</p>
+          </div>
+          <button type="button" class="btn btn-sm btn-secondary" onclick="app.resetDemoData()">Reset Demo Store</button>
+        </div>
+
+        <div class="admin-metrics">
+          <div class="metric-card">
+            <span style="font-size: 0.85rem; color: var(--color-text-secondary);">Total Studio Revenue</span>
+            <div class="metric-value" id="adminRevenue">$0.00</div>
+          </div>
+          <div class="metric-card">
+            <span style="font-size: 0.85rem; color: var(--color-text-secondary);">Orders Completed</span>
+            <div class="metric-value" id="adminOrderCount">0</div>
+          </div>
+          <div class="metric-card">
+            <span style="font-size: 0.85rem; color: var(--color-text-secondary);">Finished Stock on Hand</span>
+            <div class="metric-value" id="adminStockCount">48 units</div>
+          </div>
+        </div>
+
+        <h3 style="margin-bottom: var(--space-4);">Recent Customer Orders</h3>
+        <div style="overflow-x: auto;">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Recipient</th>
+                <th>Items Ordered</th>
+                <th>Total Value</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="adminOrdersTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+
+        <h3 style="margin: var(--space-8) 0 var(--space-4);">Studio Inventory Levels</h3>
+        <div style="overflow-x: auto;">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>SKU</th>
+                <th>Vessel Name</th>
+                <th>Glaze Finish</th>
+                <th>Units In Kiln</th>
+                <th>Unit Price</th>
+              </tr>
+            </thead>
+            <tbody id="adminInventoryTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- PRODUCT DETAIL OVERLAY MODAL -->
+  <div class="detail-overlay" id="detailOverlay" role="dialog" aria-modal="true" aria-labelledby="modalProductTitle">
+    <div class="detail-modal">
+      <div class="detail-image-box" id="modalProductSvg">
+        <!-- Injected via JS -->
+      </div>
+      <div class="detail-content">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+          <h3 id="modalProductTitle" style="font-size: 1.5rem;">Vessel Name</h3>
+          <button type="button" class="btn btn-sm btn-secondary" onclick="app.closeDetail()" aria-label="Close dialog">✕</button>
+        </div>
+        <p id="modalProductPrice" style="font-family: var(--font-display); font-size: 1.25rem; color: var(--color-primary); margin: var(--space-2) 0;"></p>
+        <p id="modalProductDesc" style="font-size: 0.95rem; margin-bottom: var(--space-4);"></p>
+
+        <div class="detail-specs">
+          <div class="spec-row">
+            <span>Firing Atmosphere:</span>
+            <strong>Gas Reduction, Cone 10</strong>
+          </div>
+          <div class="spec-row">
+            <span>Material:</span>
+            <strong>High-Iron Stoneware Clay</strong>
+          </div>
+          <div class="spec-row">
+            <span>Care Instructions:</span>
+            <strong>Dishwasher & Microwave Safe</strong>
+          </div>
+        </div>
+
+        <div style="margin-top: auto; display: flex; gap: var(--space-4);">
+          <button type="button" class="btn btn-primary" id="modalAddButton" style="flex-grow: 1;">Add to Order Bag</button>
+          <button type="button" class="btn btn-secondary" onclick="app.closeDetail()">Dismiss</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUTHENTICATION / SIGN IN MODAL -->
+  <div class="detail-overlay" id="authOverlay" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <div class="detail-modal" style="max-width: 440px; grid-template-columns: 1fr;">
+      <div style="padding: var(--space-6);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-4);">
+          <h3 id="authTitle">Studio Account Login</h3>
+          <button type="button" class="btn btn-sm btn-secondary" onclick="app.closeAuthModal()" aria-label="Close dialog">✕</button>
+        </div>
+        <p style="font-size: 0.85rem; margin-bottom: var(--space-5);">Access your personal dispatch notices and previous workshop receipts.</p>
+
+        <form id="authForm" onsubmit="app.handleAuthSubmit(event)">
+          <div class="form-group">
+            <label for="authEmail">Email Address</label>
+            <input type="email" id="authEmail" required value="eleanor.vance@example.com">
+          </div>
+          <div class="form-group">
+            <label for="authPassword">Password</label>
+            <input type="password" id="authPassword" required value="••••••••">
+            <span class="input-hint">Demo simulation: submit directly to sign in.</span>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block" style="margin-top: var(--space-4);">Authenticate</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- SHOPPING CART SLIDE-OUT DRAWER -->
+  <div class="cart-drawer-backdrop" id="cartBackdrop" onclick="app.toggleCart(false)"></div>
+  <aside class="cart-drawer" id="cartDrawer" aria-label="Shopping Cart">
+    <div class="drawer-header">
+      <h3 style="font-size: 1.15rem;">Selected Items (<span id="cartDrawerCount">0</span>)</h3>
+      <button type="button" class="btn btn-sm btn-secondary" onclick="app.toggleCart(false)" aria-label="Close shopping bag">✕</button>
+    </div>
+
+    <div class="drawer-items" id="cartItemsList">
+      <!-- Items dynamically populated -->
+    </div>
+
+    <div class="drawer-footer">
+      <div class="summary-row">
+        <span>Cart Subtotal</span>
+        <span id="cartSubtotal">$0.00</span>
+      </div>
+      <div class="summary-row" style="color: var(--color-accent); font-size: 0.85rem;">
+        <span>Studio Freight</span>
+        <span>Calculated at checkout</span>
+      </div>
+      <div class="summary-row summary-total">
+        <span>Total Payable</span>
+        <span id="cartTotalDisplay">$0.00</span>
+      </div>
+      <button type="button" class="btn btn-primary btn-block" id="btnCheckout" onclick="app.startCheckout()" style="margin-top: var(--space-4);">
+        Proceed to Delivery
+      </button>
+    </div>
+  </aside>
+
+  <!-- SITE FOOTER -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="brand-mark" style="margin-bottom: var(--space-3);">KILN <span>&</span> CLAY</div>
+          <p style="max-width: 360px;">
+            A functional pottery studio crafting intentional daily wares. We use locally sourced stoneware bodies and formulate all glazes on site.
+          </p>
+        </div>
+        <div>
+          <h4 style="font-size: 0.95rem; margin-bottom: var(--space-3);">Studio Workshop</h4>
+          <p style="font-size: 0.85rem; line-height: 1.8;">
+            148 Oakwood Studio Rd<br>
+            Kiln Shed 4B<br>
+            Portland, OR 97201
+          </p>
+        </div>
+        <div>
+          <h4 style="font-size: 0.95rem; margin-bottom: var(--space-3);">Customer Care</h4>
+          <p style="font-size: 0.85rem; line-height: 1.8;">
+            dispatch@kilnclay.demo<br>
+            Cone 10 Quality Guarantee<br>
+            Insured Breakage Coverage
+          </p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2026 KILN & CLAY Ceramics Studio. All rights reserved.</span>
+        <span>Built with semantic HTML & zero extraneous script dependencies.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- APPLICATION CONTROLLER SCRIPT -->
+  <script>
+    (function () {
+      'use strict';
+
+      // PRODUCT DATA CATALOG
+      const PRODUCTS = [
+        {
+          id: 'carafe',
+          sku: 'KC-VES-01',
+          name: 'Reduction Fired Pouring Carafe',
+          price: 74.00,
+          finish: 'Raw Iron Slip & Matte Terra',
+          stock: 12,
+          desc: 'A tall, balanced pouring vessel thrown with a sharp dripless spout. Ideal for decanting wine, cold brew, or table water.',
+          svg: `<svg viewBox="0 0 160 160" width="100" height="100"><ellipse cx="80" cy="140" rx="40" ry="5" fill="#E0D8CE"/><path d="M60 40 L70 135 L90 135 L100 40 Z" fill="#9E472A"/><path d="M95 55 Q115 80 88 110" fill="none" stroke="#9E472A" stroke-width="5" stroke-linecap="round"/><ellipse cx="80" cy="40" rx="20" ry="4" fill="#833920"/></svg>`
+        },
+        {
+          id: 'tasting-cups',
+          sku: 'KC-CUP-02',
+          name: 'Stoneware Tasting Cups (Pair)',
+          price: 46.00,
+          finish: 'Muted Celadon Green Glaze',
+          stock: 18,
+          desc: 'Two hand-pinched handleless cups designed to rest comfortably in the palms for hot tea or pour-over coffee.',
+          svg: `<svg viewBox="0 0 160 160" width="100" height="100"><ellipse cx="55" cy="135" rx="25" ry="4" fill="#E0D8CE"/><path d="M38 85 L44 130 L66 130 L72 85 Z" fill="#4B5842"/><ellipse cx="55" cy="85" rx="17" ry="3" fill="#3D4836"/><ellipse cx="105" cy="135" rx="25" ry="4" fill="#E0D8CE"/><path d="M88 85 L94 130 L116 130 L122 85 Z" fill="#4B5842"/><ellipse cx="105" cy="85" rx="17" ry="3" fill="#3D4836"/></svg>`
+        },
+        {
+          id: 'ramen-bowl',
+          sku: 'KC-BWL-03',
+          name: 'Wide Shallow Pasta & Broth Bowl',
+          price: 52.00,
+          finish: 'Toasted Oatmeal & Iron Speckle',
+          stock: 14,
+          desc: 'Flared rim stoneware bowl engineered with high thermal retention to keep broths and pastas hot at table.',
+          svg: `<svg viewBox="0 0 160 160" width="100" height="100"><ellipse cx="80" cy="135" rx="45" ry="5" fill="#E0D8CE"/><path d="M30 75 Q80 140 130 75 Z" fill="#D3C7B7"/><path d="M30 75 Q80 65 130 75 Q80 85 30 75" fill="#F2ECE4"/></svg>`
+        },
+        {
+          id: 'pinch-dish',
+          sku: 'KC-DSH-04',
+          name: 'Cellar Salt Pinch Dish',
+          price: 24.00,
+          finish: 'Unglazed Exterior, Charcoal Interior',
+          stock: 24,
+          desc: 'Small kitchen-side condiment dish featuring a tactile unglazed base and a smooth glazed interior well.',
+          svg: `<svg viewBox="0 0 160 160" width="100" height="100"><ellipse cx="80" cy="135" rx="35" ry="4" fill="#E0D8CE"/><path d="M45 105 Q80 140 115 105 Z" fill="#6E6A64"/><ellipse cx="80" cy="105" rx="35" ry="6" fill="#242220"/></svg>`
+        }
+      ];
+
+      // APPLICATION STATE
+      const state = {
+        cart: {},
+        currentView: 'storefront',
+        currentUser: null,
+        shippingInfo: null,
+        orders: [
+          {
+            id: 'KC-9102',
+            name: 'Marcus Chen',
+            items: '1x Reduction Fired Pouring Carafe',
+            total: 74.00,
+            status: 'Paid & Dispatched'
+          }
+        ]
+      };
+
+      // CORE APPLICATION CONTROLLER
+      const app = {
+        init() {
+          this.renderCatalog();
+          this.renderAdminInventory();
+          this.renderAdminOrders();
+          this.updateCartUI();
+        },
+
+        // VIEW ROUTING
+        showView(viewName) {
+          const views = ['storefront', 'checkout', 'payment', 'confirmation', 'admin'];
+          views.forEach(v => {
+            const el = document.getElementById('view' + v.charAt(0).toUpperCase() + v.slice(1));
+            if (el) el.classList.remove('active-view');
+          });
+
+          const target = document.getElementById('view' + viewName.charAt(0).toUpperCase() + viewName.slice(1));
+          if (target) {
+            target.classList.add('active-view');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+
+          // Update active header indicator
+          document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active-tab'));
+          if (viewName === 'storefront') document.getElementById('navStorefront')?.classList.add('active-tab');
+          if (viewName === 'admin') document.getElementById('navAdmin')?.classList.add('active-tab');
+
+          state.currentView = viewName;
+        },
+
+        // CATALOG RENDERING
+        renderCatalog() {
+          const container = document.getElementById('productGridContainer');
+          if (!container) return;
+
+          container.innerHTML = PRODUCTS.map(p => `
+            <article class="product-card">
+              <div class="product-thumb">
+                ${p.svg}
+              </div>
+              <div class="product-info">
+                <div class="product-meta">
+                  <h3 style="font-size: 1.1rem;">${p.name}</h3>
+                  <span class="product-price">$${p.price.toFixed(2)}</span>
+                </div>
+                <p class="product-desc">${p.desc}</p>
+                <div class="product-card-actions">
+                  <button type="button" class="btn btn-secondary btn-sm" onclick="app.openDetail('${p.id}')">Inspect</button>
+                  <button type="button" class="btn btn-primary btn-sm" style="flex-grow: 1;" onclick="app.addToCart('${p.id}')">Add to Cart</button>
+                </div>
+              </div>
+            </article>
+          `).join('');
+        },
+
+        // DETAIL MODAL
+        openDetail(productId) {
+          const product = PRODUCTS.find(p => p.id === productId);
+          if (!product) return;
+
+          document.getElementById('modalProductTitle').textContent = product.name;
+          document.getElementById('modalProductPrice').textContent = `$${product.price.toFixed(2)}`;
+          document.getElementById('modalProductDesc').textContent = product.desc;
+          document.getElementById('modalProductSvg').innerHTML = product.svg;
+
+          const addBtn = document.getElementById('modalAddButton');
+          addBtn.onclick = () => {
+            this.addToCart(product.id);
+            this.closeDetail();
+            this.toggleCart(true);
+          };
+
+          document.getElementById('detailOverlay').classList.add('active');
+        },
+
+        closeDetail() {
+          document.getElementById('detailOverlay').classList.remove('active');
+        },
+
+        // CART INTERACTIONS
+        addToCart(productId) {
+          state.cart[productId] = (state.cart[productId] || 0) + 1;
+          this.updateCartUI();
+        },
+
+        changeQty(productId, delta) {
+          if (!state.cart[productId]) return;
+          state.cart[productId] += delta;
+          if (state.cart[productId] <= 0) {
+            delete state.cart[productId];
+          }
+          this.updateCartUI();
+        },
+
+        toggleCart(isOpen) {
+          const drawer = document.getElementById('cartDrawer');
+          const backdrop = document.getElementById('cartBackdrop');
+          if (isOpen) {
+            drawer.classList.add('active');
+            backdrop.classList.add('active');
+          } else {
+            drawer.classList.remove('active');
+            backdrop.classList.remove('active');
+          }
+        },
+
+        updateCartUI() {
+          const count = Object.values(state.cart).reduce((a, b) => a + b, 0);
+          document.getElementById('cartCountBadge').textContent = count;
+          document.getElementById('cartDrawerCount').textContent = count;
+
+          const list = document.getElementById('cartItemsList');
+          const checkoutBtn = document.getElementById('btnCheckout');
+
+          if (count === 0) {
+            list.innerHTML = `
+              <div style="text-align: center; padding: var(--space-8) var(--space-4); color: var(--color-text-secondary);">
+                <p>Your studio bag is currently empty.</p>
+                <button type="button" class="btn btn-secondary btn-sm" style="margin-top: var(--space-4);" onclick="app.toggleCart(false)">Continue Browsing</button>
+              </div>
+            `;
+            document.getElementById('cartSubtotal').textContent = '$0.00';
+            document.getElementById('cartTotalDisplay').textContent = '$0.00';
+            checkoutBtn.disabled = true;
+            return;
+          }
+
+          checkoutBtn.disabled = false;
+          let subtotal = 0;
+
+          list.innerHTML = Object.entries(state.cart).map(([id, qty]) => {
+            const p = PRODUCTS.find(item => item.id === id);
+            if (!p) return '';
+            const lineTotal = p.price * qty;
+            subtotal += lineTotal;
+
+            return `
+              <div class="cart-item">
+                <div class="cart-item-img">${p.svg}</div>
+                <div>
+                  <h4 style="font-size: 0.95rem;">${p.name}</h4>
+                  <span style="font-size: 0.85rem; color: var(--color-text-secondary);">$${p.price.toFixed(2)} each</span>
+                  <div>
+                    <div class="qty-controls">
+                      <button type="button" class="qty-btn" onclick="app.changeQty('${p.id}', -1)" aria-label="Decrease quantity">−</button>
+                      <span class="qty-num">${qty}</span>
+                      <button type="button" class="qty-btn" onclick="app.changeQty('${p.id}', 1)" aria-label="Increase quantity">+</button>
+                    </div>
+                  </div>
+                </div>
+                <div style="font-weight: 600; font-size: 0.95rem;">$${lineTotal.toFixed(2)}</div>
+              </div>
+            `;
+          }).join('');
+
+          document.getElementById('cartSubtotal').textContent = `$${subtotal.toFixed(2)}`;
+          document.getElementById('cartTotalDisplay').textContent = `$${subtotal.toFixed(2)}`;
+        },
+
+        startCheckout() {
+          this.toggleCart(false);
+          this.showView('checkout');
+        },
+
+        // SHIPPING FLOW
+        handleShippingSubmit(e) {
+          e.preventDefault();
+          state.shippingInfo = {
+            firstName: document.getElementById('shipFirstName').value,
+            lastName: document.getElementById('shipLastName').value,
+            email: document.getElementById('shipEmail').value,
+            address: document.getElementById('shipAddress').value,
+            city: document.getElementById('shipCity').value,
+            postal: document.getElementById('shipPostal').value,
+            method: document.getElementById('shipMethod').value
+          };
+
+          // Calculate final payable amount
+          let subtotal = 0;
+          Object.entries(state.cart).forEach(([id, qty]) => {
+            const p = PRODUCTS.find(i => i.id === id);
+            if (p) subtotal += p.price * qty;
+          });
+          const shippingCharge = state.shippingInfo.method === 'express' ? 15.00 : 0.00;
+          const grandTotal = subtotal + shippingCharge;
+
+          document.getElementById('paymentPayableAmount').textContent = `$${grandTotal.toFixed(2)}`;
+          this.showView('payment');
+        },
+
+        // PAYMENT FLOW (Connects to RDS & SNS through Express backend)
+        async handlePaymentSubmit(e) {
+          e.preventDefault();
+          const payBtn = document.getElementById('payButton');
+          payBtn.textContent = 'Contacting AWS Order Service...';
+          payBtn.disabled = true;
+
+          const itemSummaries = [];
+          let subtotal = 0;
+          Object.entries(state.cart).forEach(([id, qty]) => {
+            const p = PRODUCTS.find(i => i.id === id);
+            if (p) {
+              subtotal += p.price * qty;
+              itemSummaries.push({ id: p.id, name: p.name, qty: qty, price: p.price });
+            }
+          });
+
+          const shippingCost = state.shippingInfo.method === 'express' ? 15.00 : 0.00;
+          const finalTotal = subtotal + shippingCost;
+          const orderPayload = {
+            customerName: `${state.shippingInfo.firstName} ${state.shippingInfo.lastName}`,
+            customerEmail: state.shippingInfo.email,
+            shippingAddress: `${state.shippingInfo.address}, ${state.shippingInfo.city} ${state.shippingInfo.postal}`,
+            items: itemSummaries,
+            totalAmount: finalTotal
+          };
+
+          let orderRecord = null;
+          try {
+            // Attempt real AWS API call to backend
+            const res = await fetch('/api/orders', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(orderPayload)
+            });
+            if (res.ok) {
+              const data = await res.json();
+              orderRecord = data.order;
+            }
+          } catch (err) {
+            console.log('[Dev mode] Running offline local simulation.');
+          }
+
+          // Fallback if running purely offline
+          if (!orderRecord) {
+            orderRecord = {
+              id: 'KC-' + Math.floor(1000 + Math.random() * 9000),
+              name: orderPayload.customerName,
+              items: itemSummaries.map(i => `${i.qty}x ${i.name}`).join(', '),
+              total: finalTotal,
+              status: 'Paid & Dispatched'
+            };
+          }
+
+          state.orders.unshift(orderRecord);
+
+          // Update confirmation view
+          document.getElementById('confirmOrderNumber').textContent = orderRecord.id;
+          document.getElementById('confirmShippingTo').textContent = `${orderPayload.customerName}, ${orderPayload.shippingAddress}`;
+          document.getElementById('confirmAmountPaid').textContent = `$${finalTotal.toFixed(2)}`;
+
+          payBtn.textContent = 'Confirm & Pay Order';
+          payBtn.disabled = false;
+
+          // Clear cart
+          state.cart = {};
+          this.updateCartUI();
+          this.renderAdminOrders();
+          this.showView('confirmation');
+        },
+
+        // AUTHENTICATION MODAL (Connects to DynamoDB through Express backend)
+        async handleAuthSubmit(e) {
+          e.preventDefault();
+          const email = document.getElementById('authEmail').value;
+          const password = document.getElementById('authPassword').value;
+
+          try {
+            const res = await fetch('/api/auth/login', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ email, password })
+            });
+            if (res.ok) {
+              const data = await res.json();
+              state.currentUser = data.user;
+            } else {
+              // Try registering if login fails on test account
+              const regRes = await fetch('/api/auth/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+              });
+              if (regRes.ok) {
+                const regData = await regRes.json();
+                state.currentUser = regData.user;
+              }
+            }
+          } catch (err) {
+            // Local fallback
+            state.currentUser = { email: email };
+          }
+
+          if (!state.currentUser) state.currentUser = { email: email };
+          document.getElementById('accountNavLabel').textContent = email.split('@')[0];
+          this.closeAuthModal();
+        },
+
+        // ADMIN PORTAL
+        renderAdminInventory() {
+          const tbody = document.getElementById('adminInventoryTableBody');
+          if (!tbody) return;
+
+          tbody.innerHTML = PRODUCTS.map(p => `
+            <tr>
+              <td><code>${p.sku}</code></td>
+              <td><strong>${p.name}</strong></td>
+              <td>${p.finish}</td>
+              <td>${p.stock} units</td>
+              <td>$${p.price.toFixed(2)}</td>
+            </tr>
+          `).join('');
+        },
+
+        async renderAdminOrders() {
+          const tbody = document.getElementById('adminOrdersTableBody');
+          if (!tbody) return;
+
+          try {
+            const res = await fetch('/api/orders');
+            if (res.ok) {
+              const data = await res.json();
+              if (data.orders && data.orders.length > 0) {
+                state.orders = data.orders.map(o => ({
+                  id: o.id,
+                  name: o.customer_name || o.name,
+                  items: o.items_summary || o.items,
+                  total: parseFloat(o.total_amount || o.total),
+                  status: o.status
+                }));
+              }
+            }
+          } catch (err) {
+            // keep local state
+          }
+
+          const totalRev = state.orders.reduce((acc, curr) => acc + (parseFloat(curr.total) || 0), 0);
+          document.getElementById('adminRevenue').textContent = `$${totalRev.toFixed(2)}`;
+          document.getElementById('adminOrderCount').textContent = state.orders.length;
+
+          tbody.innerHTML = state.orders.map(o => `
+            <tr>
+              <td><strong>${o.id}</strong></td>
+              <td>${o.name}</td>
+              <td>${o.items}</td>
+              <td><strong>$${(parseFloat(o.total) || 0).toFixed(2)}</strong></td>
+              <td><span class="status-pill paid">${o.status}</span></td>
+            </tr>
+          `).join('');
+        },
+
+        resetDemoData() {
+          state.orders = [
+            {
+              id: 'KC-9102',
+              name: 'Marcus Chen',
+              items: '1x Reduction Fired Pouring Carafe',
+              total: 74.00,
+              status: 'Paid & Dispatched'
+            }
+          ];
+          this.renderAdminOrders();
+        }
+      };
+
+      // Expose app controller to global scope for event attributes
+      window.app = app;
+      document.addEventListener('DOMContentLoaded', () => app.init());
+    })();
+  </script>
+</body>
+</html>
