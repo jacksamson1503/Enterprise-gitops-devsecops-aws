@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bag &amp; Packing Manifest — KILN &amp; CLAY</title>
+  
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=Instrument+Sans:wght@400..700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body data-page="cart">
+
+  <!-- Masthead Header -->
+  <header class="site-header">
+    <div class="masthead-top-bar">
+      <span>Studio Dispatch Manifest</span>
+      <span>Complimentary Delivery Above ₹999</span>
+      <span>Curated Editions</span>
+    </div>
+    <div class="masthead-main container">
+      <a href="index.html" class="brand-mark">
+        KILN &amp; CLAY
+        <span class="brand-edition">Editions</span>
+      </a>
+
+      <nav aria-label="Main Navigation">
+        <ul class="nav-links">
+          <li><a href="index.html" class="nav-link">Catalogue</a></li>
+          <li><a href="cart.html" class="nav-link active">Bag Review</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="cart.html" class="bag-btn" aria-label="View shopping bag">
+          <span>Bag</span>
+          <span class="bag-count">[0]</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="page-editorial-header">
+      <div class="eyebrow-label">Order Manifest</div>
+      <h1 class="page-editorial-title">Your Studio Bag</h1>
+    </div>
+
+    <!-- Editorial Steps -->
+    <div class="editorial-steps">
+      <div class="step-item is-active">
+        <span class="step-num">01</span> Review Bag
+      </div>
+      <div class="step-item">
+        <span class="step-num">02</span> Dispatch Address
+      </div>
+      <div class="step-item">
+        <span class="step-num">03</span> Parcel Packing
+      </div>
+      <div class="step-item">
+        <span class="step-num">04</span> Confirmation
+      </div>
+    </div>
+
+    <!-- Dynamic Cart Container -->
+    <div id="cart-content-container">
+      <!-- Populated by js/app.js -->
+    </div>
+  </main>
+
+  <!-- Editorial Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-title">KILN &amp; CLAY</div>
+          <p style="font-size: 0.88rem; max-width: 320px; margin-bottom: var(--space-4);">
+            Every commission supports independent regional makers and zero-plastic artisanal packaging.
+          </p>
+        </div>
+        <div>
+          <div class="footer-col-title">Studio Protocol</div>
+          <ul class="footer-links">
+            <li><a href="index.html" class="footer-link">Return to Catalogue</a></li>
+            <li><a href="#" class="footer-link">Packaging Specifications</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Assistance</div>
+          <ul class="footer-links">
+            <li><a href="#" class="footer-link">studio@kilnandclay.in</a></li>
+            <li><a href="#" class="footer-link">+91 (0) 79 2658 9200</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Currency</div>
+          <p style="font-size: 0.85rem; color: var(--color-ink-muted);">
+            All transactions settled in Indian Rupees (₹ INR) including 18% statutory GST.
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>© 2026 KILN &amp; CLAY EDITIONS</div>
+        <div>EDITORIAL PRINT COMMERCE • ZERO ICONS</div>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

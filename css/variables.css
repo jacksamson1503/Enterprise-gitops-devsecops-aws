@@ -1,0 +1,54 @@
+/* ==========================================================================
+   DESIGN TOKENS — EDITORIAL CATALOGUE DIRECTION
+   Warm paper palette, typographic precision, 1px ink rules.
+   No gradients, no glassmorphism, no neon, no heavy drop shadows.
+   ========================================================================== */
+
+:root {
+  /* Editorial Paper & Ink Palette */
+  --color-paper: #F4EFE6;           /* Warm off-white newsprint */
+  --color-paper-tint: #EAE3D6;      /* Slightly deeper paper for cards */
+  --color-paper-card: #ECE5D8;      /* Structural panel background */
+  --color-paper-surface: #FDFBF7;   /* Pure unprinted parchment */
+
+  --color-ink: #1B1A17;             /* Dense typographic charcoal-black */
+  --color-ink-muted: #646059;       /* Secondary editorial body text */
+  --color-ink-light: #948F85;       /* Captions, metadata, colophon lines */
+
+  /* Single Accent & Secondary Tones */
+  --color-terracotta: #B5472B;      /* Warm raw terracotta ink */
+  --color-terracotta-hover: #963820;
+  --color-olive: #5A6351;           /* Muted secondary botanical tone */
+
+  /* Structural Hairlines */
+  --color-border: #D8D0C2;          /* Fine paper hairline border */
+  --color-border-dark: #1B1A17;     /* Solid ink hairline rule */
+
+  /* Functional Status (Restrained) */
+  --color-status-success: #3E5B42;
+  --color-status-error: #B5472B;
+
+  /* Typography Pairing */
+  --font-serif: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-grotesque: 'Instrument Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* 8px Spacing Grid */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-8: 48px;
+  --space-10: 64px;
+  --space-12: 96px;
+
+  /* Architectural Radii (Restrained: 0 to 3px) */
+  --radius-none: 0px;
+  --radius-sm: 2px;
+  --radius-md: 3px;
+
+  /* Subtle ink transitions */
+  --transition-fast: 140ms ease;
+  --transition-normal: 220ms ease;
+}

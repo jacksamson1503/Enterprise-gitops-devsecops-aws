@@ -1,0 +1,632 @@
+/* ==========================================================================
+   COMPONENTS — EDITORIAL PRINT STOREFRONT
+   No icons, no emoji, no glassmorphism, no neon, no card shadows.
+   Flat color blocks, 1px ink hairlines, confident typography.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   MASTHEAD NAVBAR
+   -------------------------------------------------------------------------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: var(--color-paper);
+  border-bottom: 1px solid var(--color-ink);
+}
+
+.masthead-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-2) var(--space-5);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-ink-muted);
+}
+
+@media (max-width: 680px) {
+  .masthead-top-bar {
+    justify-content: center;
+    text-align: center;
+    padding: var(--space-2) var(--space-3);
+  }
+  .masthead-top-bar span:first-child,
+  .masthead-top-bar span:last-child {
+    display: none;
+  }
+}
+
+.masthead-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-4) var(--space-5);
+}
+
+@media (max-width: 680px) {
+  .masthead-main {
+    padding: var(--space-3) var(--space-4);
+  }
+  .brand-mark {
+    font-size: 1.35rem;
+  }
+  .nav-links {
+    display: none;
+  }
+  .bag-btn {
+    padding: 8px 14px;
+    font-size: 0.76rem;
+  }
+}
+
+.brand-mark {
+  font-family: var(--font-serif);
+  font-size: 1.65rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--color-ink);
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.brand-mark .brand-edition {
+  font-family: var(--font-grotesque);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-terracotta);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  list-style: none;
+}
+
+.nav-link {
+  font-size: 0.88rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  color: var(--color-ink);
+  position: relative;
+  padding-bottom: 2px;
+  transition: color var(--transition-fast);
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0%;
+  height: 1px;
+  background-color: var(--color-ink);
+  transition: width var(--transition-fast);
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+  width: 100%;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.bag-btn {
+  font-family: var(--font-grotesque);
+  font-size: 0.84rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  background-color: var(--color-ink);
+  color: var(--color-paper);
+  padding: 10px 18px;
+  border: 1px solid var(--color-ink);
+  border-radius: var(--radius-none);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  cursor: pointer;
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.bag-btn:hover {
+  background-color: var(--color-terracotta);
+  border-color: var(--color-terracotta);
+}
+
+.bag-count {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
+   BUTTONS (FLAT RECTANGLES, SOLID INK OR TERRACOTTA)
+   -------------------------------------------------------------------------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-grotesque);
+  font-size: 0.84rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 14px 28px;
+  border-radius: var(--radius-none);
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+  border: 1px solid transparent;
+}
+
+.btn-primary {
+  background-color: var(--color-ink);
+  color: var(--color-paper);
+  border-color: var(--color-ink);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-terracotta);
+  border-color: var(--color-terracotta);
+}
+
+.btn-accent {
+  background-color: var(--color-terracotta);
+  color: #FFFFFF;
+  border-color: var(--color-terracotta);
+}
+
+.btn-accent:hover {
+  background-color: var(--color-terracotta-hover);
+  border-color: var(--color-terracotta-hover);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: var(--color-ink);
+  border-color: var(--color-ink);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-ink);
+  color: var(--color-paper);
+}
+
+.btn-ghost {
+  background-color: transparent;
+  color: var(--color-ink);
+  border-color: transparent;
+  padding: 8px 12px;
+}
+
+.btn-ghost:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.btn-full {
+  width: 100%;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   PRODUCT CARDS (EDITORIAL PRINT FORMAT)
+   -------------------------------------------------------------------------- */
+.product-card {
+  background-color: transparent;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--space-5);
+  display: flex;
+  flex-direction: column;
+}
+
+.product-image-container {
+  background-color: var(--color-paper-tint);
+  aspect-ratio: 4/5;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  margin-bottom: var(--space-4);
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-image-container img,
+.product-image-container svg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.product-card:hover .product-image-container img,
+.product-card:hover .product-image-container svg {
+  transform: scale(1.02);
+}
+
+.product-badge-number {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  font-family: var(--font-grotesque);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--color-ink);
+  background-color: var(--color-paper);
+  padding: 3px 8px;
+  border: 1px solid var(--color-border);
+}
+
+.product-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.product-category {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-olive);
+  font-weight: 600;
+}
+
+.product-rating-text {
+  font-size: 0.75rem;
+  color: var(--color-ink-muted);
+}
+
+.product-title {
+  font-family: var(--font-serif);
+  font-size: 1.25rem;
+  line-height: 1.2;
+  color: var(--color-ink);
+  margin-bottom: var(--space-2);
+}
+
+.product-description {
+  font-size: 0.88rem;
+  color: var(--color-ink-muted);
+  line-height: 1.45;
+  margin-bottom: var(--space-4);
+  flex-grow: 1;
+}
+
+.product-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+.product-price {
+  font-family: var(--font-grotesque);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-ink);
+  letter-spacing: -0.01em;
+}
+
+.product-add-link {
+  font-family: var(--font-grotesque);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-ink);
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid var(--color-ink);
+  padding-bottom: 2px;
+  cursor: pointer;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.product-add-link:hover {
+  color: var(--color-terracotta);
+  border-color: var(--color-terracotta);
+}
+
+/* --------------------------------------------------------------------------
+   FORM ELEMENTS (HAIRLINE BORDERS, INK FOCUS)
+   -------------------------------------------------------------------------- */
+.form-group {
+  margin-bottom: var(--space-5);
+}
+
+.form-label {
+  display: block;
+  font-family: var(--font-grotesque);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-ink);
+  margin-bottom: var(--space-2);
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  font-family: var(--font-grotesque);
+  font-size: 0.95rem;
+  padding: 12px 14px;
+  background-color: var(--color-paper-surface);
+  color: var(--color-ink);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-none);
+  transition: border-color var(--transition-fast);
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--color-ink);
+}
+
+.form-input.is-invalid,
+.form-select.is-invalid {
+  border-color: var(--color-terracotta);
+  background-color: #FBF4F2;
+}
+
+.form-error-msg {
+  display: block;
+  font-size: 0.76rem;
+  color: var(--color-terracotta);
+  margin-top: 5px;
+  font-weight: 500;
+}
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+@media (max-width: 640px) {
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   QUANTITY STEPPER (CLEAN TEXT CONTROLS)
+   -------------------------------------------------------------------------- */
+.qty-control {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-paper);
+}
+
+.qty-btn {
+  background: transparent;
+  border: none;
+  font-family: var(--font-grotesque);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.qty-btn:hover {
+  background-color: var(--color-paper-tint);
+}
+
+.qty-value {
+  width: 36px;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  border-left: 1px solid var(--color-border);
+  border-right: 1px solid var(--color-border);
+  line-height: 34px;
+}
+
+/* --------------------------------------------------------------------------
+   STEP TRACKER (NUMBERED EDITORIAL TAGS)
+   -------------------------------------------------------------------------- */
+.editorial-steps {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+@media (max-width: 640px) {
+  .editorial-steps {
+    overflow-x: auto;
+    white-space: nowrap;
+    gap: var(--space-4);
+    padding-bottom: var(--space-3);
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .editorial-steps::-webkit-scrollbar {
+    display: none;
+  }
+  .step-item {
+    flex-shrink: 0;
+    font-size: 0.74rem;
+  }
+}
+
+.step-item {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  color: var(--color-ink-light);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.step-item.is-active {
+  color: var(--color-ink);
+  font-weight: 600;
+}
+
+.step-item.is-done {
+  color: var(--color-olive);
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
+.step-num {
+  font-family: var(--font-grotesque);
+  font-weight: 700;
+}
+
+/* --------------------------------------------------------------------------
+   TOAST NOTIFICATION (FLAT INK BORDER, NO ICONS)
+   -------------------------------------------------------------------------- */
+#toast-container {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  pointer-events: none;
+}
+
+.toast {
+  background-color: var(--color-paper-surface);
+  color: var(--color-ink);
+  border: 1px solid var(--color-ink);
+  padding: 14px 20px;
+  font-size: 0.84rem;
+  letter-spacing: 0.02em;
+  box-shadow: 2px 2px 0px var(--color-ink);
+  animation: toastFadeIn 0.2s ease forwards;
+  pointer-events: auto;
+  max-width: 340px;
+}
+
+.toast.toast-error {
+  border-color: var(--color-terracotta);
+  color: var(--color-terracotta);
+  box-shadow: 2px 2px 0px var(--color-terracotta);
+}
+
+@keyframes toastFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --------------------------------------------------------------------------
+   FOOTER (EDITORIAL COLOPHON)
+   -------------------------------------------------------------------------- */
+.site-footer {
+  margin-top: auto;
+  background-color: var(--color-paper);
+  border-top: 1px solid var(--color-ink);
+  padding: var(--space-10) 0 var(--space-6);
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: var(--space-8);
+  margin-bottom: var(--space-8);
+}
+
+@media (max-width: 860px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6);
+  }
+}
+
+@media (max-width: 520px) {
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.footer-title {
+  font-family: var(--font-serif);
+  font-size: 1.4rem;
+  margin-bottom: var(--space-3);
+}
+
+.footer-col-title {
+  font-family: var(--font-grotesque);
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-ink);
+  margin-bottom: var(--space-4);
+}
+
+.footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.footer-link {
+  font-size: 0.85rem;
+  color: var(--color-ink-muted);
+  transition: color var(--transition-fast);
+}
+
+.footer-link:hover {
+  color: var(--color-terracotta);
+}
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--color-border);
+  font-size: 0.75rem;
+  color: var(--color-ink-light);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 600px) {
+  .footer-bottom {
+    flex-direction: column;
+    gap: var(--space-2);
+    align-items: flex-start;
+  }
+}

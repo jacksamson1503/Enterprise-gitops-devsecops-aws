@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Studio Packing Protocol — KILN &amp; CLAY</title>
+  
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=Instrument+Sans:wght@400..700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/processing.css">
+
+  <!-- Pinned Three.js r160 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
+</head>
+<body class="processing-body">
+
+  <!-- Three.js Canvas Container -->
+  <div id="canvas3d-container"></div>
+
+  <!-- Pure CSS Fallback for Non-WebGL Environments -->
+  <div class="paper-studio-fallback" id="paper-studio-fallback"></div>
+
+  <!-- Editorial HUD Card -->
+  <main class="processing-hud-card" role="status" aria-live="polite">
+    <div class="hud-top-meta">
+      <span class="hud-tag">Packing Protocol</span>
+      <span class="hud-reference" id="hud-order-ref">ORD-2026-PROCESSING</span>
+    </div>
+
+    <!-- Oversized Serif Percentage & Typographic Loader -->
+    <div class="hud-progress-readout">
+      <div class="hud-percentage" id="hud-percentage-val">0%</div>
+      <div class="hud-loader-strip" aria-hidden="true"></div>
+    </div>
+
+    <!-- Thin 2px Progress Bar -->
+    <div class="hud-bar-container">
+      <div class="hud-bar-fill" id="hud-bar-fill"></div>
+    </div>
+
+    <!-- Honest Human Microcopy -->
+    <div class="hud-microcopy" id="hud-microcopy">
+      Authorizing payment and issuing transaction token
+    </div>
+
+    <!-- Numbered Steps (Struck through when complete, underlined when active) -->
+    <ol class="hud-step-list">
+      <li class="hud-step-item is-active">
+        <span class="hud-step-num">01</span> Verifying payment
+      </li>
+      <li class="hud-step-item">
+        <span class="hud-step-num">02</span> Confirming stock
+      </li>
+      <li class="hud-step-item">
+        <span class="hud-step-num">03</span> Packing parcel
+      </li>
+      <li class="hud-step-item">
+        <span class="hud-step-num">04</span> Ready for courier
+      </li>
+    </ol>
+
+    <div class="hud-colophon-note">
+      Crafted packaging • Zero plastic
+    </div>
+  </main>
+
+  <!-- Clean Terracotta Paper-Wipe Transition Screen -->
+  <div id="paper-wipe-overlay"></div>
+
+  <script type="module" src="js/processing.js"></script>
+</body>
+</html>

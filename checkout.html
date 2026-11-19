@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dispatch Specification &amp; Settlement — KILN &amp; CLAY</title>
+  
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=Instrument+Sans:wght@400..700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body data-page="checkout">
+
+  <!-- Masthead Header -->
+  <header class="site-header">
+    <div class="masthead-top-bar">
+      <span>Secure Dispatch Transmission</span>
+      <span>Direct Courier Delivery Across India</span>
+      <span>Studio Registry</span>
+    </div>
+    <div class="masthead-main container">
+      <a href="index.html" class="brand-mark">
+        KILN &amp; CLAY
+        <span class="brand-edition">Editions</span>
+      </a>
+
+      <nav aria-label="Main Navigation">
+        <ul class="nav-links">
+          <li><a href="index.html" class="nav-link">Catalogue</a></li>
+          <li><a href="cart.html" class="nav-link">Bag Review</a></li>
+          <li><span class="nav-link active">Dispatch Form</span></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="cart.html" class="bag-btn" aria-label="View shopping bag">
+          <span>Bag</span>
+          <span class="bag-count">[0]</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="page-editorial-header">
+      <div class="eyebrow-label">Dispatch Specification</div>
+      <h1 class="page-editorial-title">Delivery &amp; Settlement</h1>
+    </div>
+
+    <!-- Editorial Steps -->
+    <div class="editorial-steps">
+      <div class="step-item is-done">
+        <span class="step-num">01</span> Review Bag
+      </div>
+      <div class="step-item is-active">
+        <span class="step-num">02</span> Dispatch Address
+      </div>
+      <div class="step-item">
+        <span class="step-num">03</span> Parcel Packing
+      </div>
+      <div class="step-item">
+        <span class="step-num">04</span> Confirmation
+      </div>
+    </div>
+
+    <div class="checkout-grid">
+      <!-- Left: Form -->
+      <div>
+        <form id="checkout-form" novalidate>
+          <!-- Section 01: Contact -->
+          <div class="checkout-section">
+            <h2 class="checkout-section-title">
+              <span class="section-idx">01</span> Recipient Identity
+            </h2>
+
+            <div class="form-group">
+              <label for="fullname" class="form-label">Full Legal Name</label>
+              <input type="text" id="fullname" class="form-input" placeholder="e.g. Vikramaditya Patel" required>
+              <span class="form-error-msg" id="fullname-error"></span>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label for="email" class="form-label">Email Address (For Invoice)</label>
+                <input type="email" id="email" class="form-input" placeholder="name@domain.in" required>
+                <span class="form-error-msg" id="email-error"></span>
+              </div>
+
+              <div class="form-group">
+                <label for="mobile" class="form-label">Indian Mobile Number</label>
+                <input type="tel" id="mobile" class="form-input" placeholder="10-digit number (e.g. 9845012345)" maxlength="10" required>
+                <span class="form-error-msg" id="mobile-error"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 02: Postal Address -->
+          <div class="checkout-section">
+            <h2 class="checkout-section-title">
+              <span class="section-idx">02</span> Physical Premises
+            </h2>
+
+            <div class="form-group">
+              <label for="address" class="form-label">Street Address &amp; Flat / House Number</label>
+              <input type="text" id="address" class="form-input" placeholder="e.g. Flat 4B, Gulmohar Enclave, Station Road" required>
+              <span class="form-error-msg" id="address-error"></span>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label for="city" class="form-label">City or Town</label>
+                <input type="text" id="city" class="form-input" placeholder="e.g. Ahmedabad" required>
+                <span class="form-error-msg" id="city-error"></span>
+              </div>
+
+              <div class="form-group">
+                <label for="state" class="form-label">State or Territory</label>
+                <select id="state" class="form-select" required>
+                  <option value="">Select state or union territory...</option>
+                </select>
+                <span class="form-error-msg" id="state-error"></span>
+              </div>
+            </div>
+
+            <div class="form-group" style="max-width: 240px;">
+              <label for="pincode" class="form-label">Postal PIN Code</label>
+              <input type="text" id="pincode" class="form-input" placeholder="6 digits (e.g. 380006)" maxlength="6" required>
+              <span class="form-error-msg" id="pincode-error"></span>
+            </div>
+          </div>
+
+          <!-- Section 03: Payment -->
+          <div class="checkout-section" style="border-bottom: none;">
+            <h2 class="checkout-section-title">
+              <span class="section-idx">03</span> Settlement Protocol
+            </h2>
+
+            <div class="payment-methods-grid">
+              <label class="payment-option-card">
+                <input type="radio" name="paymentMethod" value="UPI (Instant Settlement)" checked>
+                <div class="payment-option-label">
+                  <span class="payment-option-title">UPI &amp; Instant Netbanking</span>
+                  <span class="payment-option-desc">Google Pay, PhonePe, Paytm, or BHIM direct transfer</span>
+                </div>
+              </label>
+
+              <label class="payment-option-card">
+                <input type="radio" name="paymentMethod" value="Credit or Debit Card">
+                <div class="payment-option-label">
+                  <span class="payment-option-title">Credit or Debit Card</span>
+                  <span class="payment-option-desc">Visa, Mastercard, RuPay, and American Express</span>
+                </div>
+              </label>
+
+              <label class="payment-option-card">
+                <input type="radio" name="paymentMethod" value="Cash on Delivery">
+                <div class="payment-option-label">
+                  <span class="payment-option-title">Cash on Delivery</span>
+                  <span class="payment-option-desc">Pay in Indian Rupees upon physical courier handoff</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div style="margin-top: var(--space-6);">
+            <button type="submit" id="submit-order-btn" class="btn btn-accent btn-full" style="font-size: 0.92rem; padding: 18px 24px;">
+              Place Order
+            </button>
+            <p style="text-align: center; font-size: 0.74rem; color: var(--color-ink-light); margin-top: var(--space-3); text-transform: uppercase; letter-spacing: 0.08em;">
+              By placing this order you authorize dispatch under studio terms
+            </p>
+          </div>
+        </form>
+      </div>
+
+      <!-- Right: Summary Box -->
+      <div>
+        <div class="invoice-summary-box">
+          <div class="invoice-summary-title">
+            <span>Dispatch Manifest</span>
+            <span>Summary</span>
+          </div>
+          <div id="checkout-summary-box">
+            <!-- Populated by js/checkout.js -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <div>© 2026 KILN &amp; CLAY EDITIONS</div>
+        <div>SECURE ENCRYPTED CHECKOUT • ZERO ICONS</div>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
