@@ -234,8 +234,8 @@ function handleOrderPlacement(form) {
   const paymentEl = form.querySelector('input[name="paymentMethod"]:checked');
   const paymentMethod = paymentEl ? paymentEl.value : 'UPI';
 
-  // Live AWS API Gateway Endpoint
-  const AWS_API_GATEWAY_URL = 'https://rxo2vbnavg.execute-api.us-east-1.amazonaws.com/ProcessOrderFunction';
+  // Live AWS API Gateway Endpoint (Both /api/orders and /ProcessOrderFunction are active)
+  const AWS_API_GATEWAY_URL = 'https://rxo2vbnavg.execute-api.us-east-1.amazonaws.com/api/orders';
 
   // Construct staged pending order
   const pendingOrder = {
@@ -262,6 +262,7 @@ function handleOrderPlacement(form) {
   try {
     fetch(AWS_API_GATEWAY_URL, {
       method: 'POST',
+      keepalive: true,
       headers: {
         'Content-Type': 'application/json'
       },
