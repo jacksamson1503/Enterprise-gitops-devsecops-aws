@@ -34,10 +34,10 @@ jobs:
           echo "Test Stage PASSED: Codebase verified."
 
   # =========================================================================
-  # STAGE 2: DOCKER IMAGE & CONTAINER STAGE
+  # STAGE 2: DOCKER BUILD TEST STAGE
   # =========================================================================
   docker-stage:
-    name: 2. Docker Image & Container Build
+    name: 2. Docker Image Build Test
     needs: test-stage
     runs-on: ubuntu-latest
     steps:
@@ -47,21 +47,21 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build Docker Container Image
+      - name: Build Docker Container Image Test
         run: |
-          echo "Building production Docker container..."
-          docker build -t kilnclay:${{ github.sha }} -t kilnclay:latest .
-          echo "Docker Stage PASSED: Image kilnclay:latest built successfully."
+          echo "Testing Dockerfile build on GitHub runner..."
+          docker build -t kilnclay-test:${{ github.sha }} .
+          echo "Docker Stage PASSED: Dockerfile builds cleanly."
 
   # =========================================================================
-  # STAGE 3: DEPLOY IN THE EC2 STAGE
+  # STAGE 3: DEPLOY CONTAINER TO EC2 SERVER STAGE
   # =========================================================================
   deploy-ec2-stage:
-    name: 3. Deploy to EC2 Server
+    name: 3. Build & Run Docker Container on EC2
     needs: docker-stage
     runs-on: ubuntu-latest
     steps:
-      - name: Execute Remote SSH Deployment on EC2
+      - name: Execute Remote SSH Docker Deployment on EC2
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST }}
@@ -69,19 +69,31 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           port: 22
           script: |
-            echo "Starting deployment on EC2 server..."
+            echo "Pulling latest code on EC2 server..."
             cd ~/kilnclay || git clone https://github.com/jacksamson1503/kilnclay.git ~/kilnclay
             cd ~/kilnclay
             git pull origin main
             
-            # Deploy latest static files to Nginx web root
-            sudo rm -rf /var/www/html/*
-            sudo cp -r * /var/www/html/
-            sudo chmod -R 755 /var/www/html/
+            echo "Stopping host Nginx service so Port 80 is freed for Docker..."
+            sudo systemctl stop nginx 2>/dev/null || true
+            sudo systemctl disable nginx 2>/dev/null || true
             
-            # Restart Nginx service
-            sudo systemctl restart nginx
+            echo "Building Docker image on EC2..."
+            sudo docker build -t kilnclay:latest .
             
-            # Verify HTTP response
+            echo "Removing any existing old container..."
+            sudo docker stop kilnclay-app 2>/dev/null || true
+            sudo docker rm kilnclay-app 2>/dev/null || true
+            
+            echo "Running new Docker container on Port 80..."
+            sudo docker run -d --name kilnclay-app -p 80:80 --restart unless-stopped kilnclay:latest
+            
+            echo "===================================================="
+            echo "DOCKER STATUS ON EC2:"
+            sudo docker ps
+            echo "===================================================="
+            
+            # Health check container response
+            sleep 2
             curl -I http://localhost
-            echo "DEPLOYMENT COMPLETE: KILN & CLAY is live on EC2!"
+            echo "SUCCESS: Docker container is running and serving website!"
