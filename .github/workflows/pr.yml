@@ -1,0 +1,55 @@
+name: Pull Request Staging & Quality Gate
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - '**'
+
+jobs:
+  pr-staging-checks:
+    name: Staging Validation & Health Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 1. Checkout Branch Code
+        uses: actions/checkout@v4
+
+      - name: 2. Set Up Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 3. Verify Required Production Pages Exist
+        run: |
+          echo "Verifying all essential e-commerce pages..."
+          REQUIRED_FILES=("index.html" "cart.html" "checkout.html" "processing.html" "confirmation.html" "login.html")
+          for file in "${REQUIRED_FILES[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "ERROR: Critical production page $file is missing!"
+              exit 1
+            fi
+            echo "PASS: $file exists."
+          done
+
+      - name: 4. Validate JavaScript ES6 Modules Syntax
+        run: |
+          echo "Testing JavaScript files for syntax errors..."
+          for jsfile in js/*.js; do
+            node --check "$jsfile"
+            echo "PASS: $jsfile syntax is valid."
+          done
+
+      - name: 5. Test Docker Container Build
+        run: |
+          echo "Building test container to ensure image builds cleanly..."
+          docker build -t kilnclay-staging-test:${{ github.sha }} .
+          echo "PASS: Docker image built successfully."
+
+      - name: 6. Staging Pass Signal
+        run: |
+          echo "=========================================================="
+          echo "SUCCESS: ALL PR STAGING VALIDATIONS PASSED!"
+          echo "This Pull Request is verified and ready for merge into main."
+          echo "=========================================================="
