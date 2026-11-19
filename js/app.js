@@ -8,10 +8,13 @@ import { PRODUCTS, filterProducts } from './products.js';
 import { addToCart, getCartSummary, updateQuantity, removeFromCart, applyPromoCode, removePromoCode } from './cart.js';
 import { formatINR, showToast } from './utils.js';
 import { initCheckoutPage } from './checkout.js';
+import { getSessionUser } from './auth.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   initNavbarBagCount();
+  updateAuthNavbar();
   window.addEventListener('cartUpdated', initNavbarBagCount);
+  window.addEventListener('authChanged', updateAuthNavbar);
 
   const page = document.body.dataset.page;
   if (page === 'home') {
@@ -31,6 +34,18 @@ export function initNavbarBagCount() {
   const summary = getCartSummary();
   countEls.forEach(el => {
     el.textContent = `[${summary.totals.itemCount}]`;
+  });
+}
+
+export function updateAuthNavbar() {
+  const user = getSessionUser();
+  const identityLinks = document.querySelectorAll('a[href="login.html"]');
+  identityLinks.forEach(link => {
+    if (user) {
+      link.textContent = `Account [${user.name.split(' ')[0]}]`;
+    } else {
+      link.textContent = 'Sign In';
+    }
   });
 }
 

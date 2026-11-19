@@ -6,6 +6,7 @@
 
 import { getCartSummary, clearCart } from './cart.js';
 import { formatINR, generateOrderId, showToast } from './utils.js';
+import { getSessionUser } from './auth.js';
 
 export const INDIAN_STATES = [
   'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
@@ -31,6 +32,15 @@ export function initCheckoutPage() {
       opt.textContent = state;
       stateSelect.appendChild(opt);
     });
+  }
+
+  // Auto-fill from active Cognito Session if logged in
+  const currentUser = getSessionUser();
+  if (currentUser) {
+    const nameInput = document.getElementById('fullname');
+    const emailInput = document.getElementById('email');
+    if (nameInput && !nameInput.value) nameInput.value = currentUser.name || '';
+    if (emailInput && !emailInput.value) emailInput.value = currentUser.email || '';
   }
 
   // Render Order Summary
