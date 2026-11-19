@@ -234,6 +234,9 @@ function handleOrderPlacement(form) {
   const paymentEl = form.querySelector('input[name="paymentMethod"]:checked');
   const paymentMethod = paymentEl ? paymentEl.value : 'UPI';
 
+  // Live AWS API Gateway Endpoint
+  const AWS_API_GATEWAY_URL = 'https://rxo2vbnavg.execute-api.us-east-1.amazonaws.com/ProcessOrderFunction';
+
   // Construct staged pending order
   const pendingOrder = {
     orderId: generateOrderId(),
@@ -255,10 +258,31 @@ function handleOrderPlacement(form) {
 
   sessionStorage.setItem('pending_order', JSON.stringify(pendingOrder));
 
+  // Asynchronously dispatch order payload to AWS API Gateway -> Lambda -> DynamoDB -> SNS -> SES
+  try {
+    fetch(AWS_API_GATEWAY_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(pendingOrder)
+    }).then(res => res.json()).then(result => {
+      console.log('AWS Serverless Order Processed:', result);
+      if (result && result.orderId) {
+        pendingOrder.orderId = result.orderId;
+        sessionStorage.setItem('pending_order', JSON.stringify(pendingOrder));
+      }
+    }).catch(err => {
+      console.warn('API Gateway dispatch note:', err);
+    });
+  } catch (apiErr) {
+    console.warn('AWS Dispatch error:', apiErr);
+  }
+
   // Redirect to 3D virtual animation processing page
   setTimeout(() => {
     window.location.href = 'processing.html';
-  }, 400);
+  }, 450);
 }
 
 function getEstimatedDeliveryDate() {

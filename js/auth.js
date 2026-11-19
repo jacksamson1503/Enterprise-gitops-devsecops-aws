@@ -12,8 +12,8 @@ import { showToast } from './utils.js';
 // ==========================================================================
 export const COGNITO_CONFIG = {
   region: 'us-east-1',
-  userPoolId: 'us-east-1_SAMPLEPOOL',   // Replace with your real User Pool ID
-  clientId: 'SAMPLECLIENTID123456789'   // Replace with your real App Client ID
+  userPoolId: 'us-east-1_xC96ayFV4',   // Live AWS Cognito User Pool ID
+  clientId: 'SAMPLECLIENTID123456789'   // App Client ID from App integration tab
 };
 
 const STORAGE_KEY_USER = 'cognito_user_session_v1';

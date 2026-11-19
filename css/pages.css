@@ -12,6 +12,21 @@
   padding: var(--space-10) 0 var(--space-8);
 }
 
+@media (max-width: 600px) {
+  .hero-editorial {
+    padding: var(--space-6) 0 var(--space-5);
+  }
+  .hero-headline {
+    font-size: 2.2rem;
+    line-height: 1.1;
+  }
+  .hero-lead {
+    font-size: 0.95rem;
+    line-height: 1.55;
+    margin-bottom: var(--space-4);
+  }
+}
+
 .hero-grid {
   display: grid;
   grid-template-columns: 7fr 5fr;

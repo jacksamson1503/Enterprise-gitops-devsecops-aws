@@ -98,6 +98,12 @@ a {
   padding: 0 var(--space-5);
 }
 
+@media (max-width: 600px) {
+  .container {
+    padding: 0 16px;
+  }
+}
+
 .main-content {
   flex-grow: 1;
   padding-bottom: var(--space-12);
