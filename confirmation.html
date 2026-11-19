@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order Confirmed — KILN &amp; CLAY</title>
+  
+  <!-- Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=Instrument+Sans:wght@400..700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+
+  <!-- Masthead Header -->
+  <header class="site-header">
+    <div class="masthead-top-bar">
+      <span>Official Studio Receipt &amp; Dispatch Manifest</span>
+      <span>GST Invoice Generated</span>
+      <span>Dispatched from Ahmedabad</span>
+    </div>
+    <div class="masthead-main container">
+      <a href="index.html" class="brand-mark">
+        KILN &amp; CLAY
+        <span class="brand-edition">Editions</span>
+      </a>
+
+      <nav aria-label="Main Navigation">
+        <ul class="nav-links">
+          <li><a href="index.html" class="nav-link">Catalogue</a></li>
+          <li><span class="nav-link active">Confirmed</span></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="cart.html" class="bag-btn" aria-label="View shopping bag">
+          <span>Bag</span>
+          <span class="bag-count">[0]</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container confirmation-container">
+    <!-- Typographic Confirmation & Ink Rule Animation (Zero Checkmark Icons) -->
+    <header class="confirmation-header">
+      <div class="eyebrow-label" style="color: var(--color-olive); margin-bottom: var(--space-3);">Order Settled &amp; Scheduled</div>
+      <h1 class="confirmation-headline">Your order is confirmed.</h1>
+      <!-- Animated Drawing Ink Line -->
+      <div class="ink-drawn-rule" aria-hidden="true"></div>
+    </header>
+
+    <!-- Large Order Reference Number -->
+    <div class="order-reference-box">
+      <div>
+        <div class="eyebrow-label">Order Identifier</div>
+        <div class="order-reference-id" id="conf-order-id">ORD-2026-48213</div>
+      </div>
+      <div style="text-align: right;">
+        <div class="eyebrow-label">Settlement Date</div>
+        <div style="font-size: 0.95rem; font-weight: 600;" id="conf-date">19 November 2026</div>
+      </div>
+    </div>
+
+    <!-- Manifest Receipt Box -->
+    <div class="manifest-receipt-box">
+      <div class="receipt-meta-grid">
+        <div class="receipt-meta-block">
+          <h4>Consignee &amp; Delivery Premises</h4>
+          <p id="conf-customer-name" style="font-weight: 600;"></p>
+          <p id="conf-address"></p>
+        </div>
+        <div class="receipt-meta-block">
+          <h4>Scheduled Dispatch</h4>
+          <p><strong>Estimated Arrival:</strong> <span id="conf-delivery-date"></span></p>
+          <p style="margin-top: 8px;"><strong>Payment Method:</strong> <span id="conf-payment-method"></span></p>
+          <p style="margin-top: 4px; font-size: 0.8rem; color: var(--color-olive);">Status: Payment Received &amp; Verified</p>
+        </div>
+      </div>
+
+      <!-- Itemized Table -->
+      <h4 style="font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--color-ink-muted); margin-bottom: var(--space-3);">
+        Itemized Dispatch Manifest
+      </h4>
+      <table style="width: 100%; border-collapse: collapse; margin-bottom: var(--space-6);">
+        <thead>
+          <tr>
+            <th style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-ink-muted); text-align: left; padding-bottom: 8px; border-bottom: 1px solid var(--color-ink);">Item</th>
+            <th style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-ink-muted); text-align: center; padding-bottom: 8px; border-bottom: 1px solid var(--color-ink);">Qty</th>
+            <th style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-ink-muted); text-align: right; padding-bottom: 8px; border-bottom: 1px solid var(--color-ink);">Price</th>
+            <th style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--color-ink-muted); text-align: right; padding-bottom: 8px; border-bottom: 1px solid var(--color-ink);">Total</th>
+          </tr>
+        </thead>
+        <tbody id="conf-items-list">
+          <!-- Populated by js/confirmation.js -->
+        </tbody>
+      </table>
+
+      <!-- Totals Breakdown -->
+      <div style="max-width: 320px; margin-left: auto;">
+        <div class="invoice-line invoice-line-muted">
+          <span>Subtotal</span>
+          <span class="tabular" id="conf-subtotal">₹0</span>
+        </div>
+        <div class="invoice-line" id="conf-discount-row" style="color: var(--color-terracotta); display: none;">
+          <span>Voucher Discount</span>
+          <span class="tabular" id="conf-discount">-₹0</span>
+        </div>
+        <div class="invoice-line invoice-line-muted">
+          <span>Shipping</span>
+          <span class="tabular" id="conf-shipping">Free</span>
+        </div>
+        <div class="invoice-line invoice-line-muted">
+          <span>GST (18% Statutory Rate)</span>
+          <span class="tabular" id="conf-gst">₹0</span>
+        </div>
+        <div class="invoice-line total-line">
+          <span>Total Paid</span>
+          <span class="tabular" style="color: var(--color-terracotta);" id="conf-total-paid">₹0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="confirmation-actions">
+      <a href="index.html" class="btn btn-primary">Continue Shopping</a>
+      <button id="print-receipt-btn" class="btn btn-secondary" type="button">Print Receipt</button>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <div>© 2026 KILN &amp; CLAY EDITIONS</div>
+        <div>TAX INVOICE ISSUED UNDER INDIAN STATUTE • ZERO ICONS</div>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="js/confirmation.js"></script>
+</body>
+</html>
