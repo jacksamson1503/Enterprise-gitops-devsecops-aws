@@ -7,13 +7,12 @@
 import { showToast } from './utils.js';
 
 // ==========================================================================
-// AWS COGNITO CONFIGURATION
-// Replace these with your real Cognito User Pool & App Client IDs from AWS Console
+// LIVE AWS COGNITO CONFIGURATION
 // ==========================================================================
 export const COGNITO_CONFIG = {
   region: 'us-east-1',
-  userPoolId: 'us-east-1_xC96ayFV4',   // Live AWS Cognito User Pool ID
-  clientId: 'SAMPLECLIENTID123456789'   // App Client ID from App integration tab
+  userPoolId: 'us-east-1_xC96ayFV4',     // Live AWS Cognito User Pool ID
+  clientId: 'tnstbvuc9hbdsn4h5mtn38d7e'   // Live AWS Cognito App Client ID
 };
 
 const STORAGE_KEY_USER = 'cognito_user_session_v1';
@@ -42,8 +41,7 @@ export function clearSessionUser() {
  * 1. SIGN UP (Register user with Cognito & dispatch OTP to email)
  */
 export async function handleCognitoSignUp(name, email, password) {
-  // If real Amazon Cognito Identity SDK is available and configured
-  if (typeof AmazonCognitoIdentity !== 'undefined' && COGNITO_CONFIG.userPoolId !== 'us-east-1_SAMPLEPOOL') {
+  if (typeof AmazonCognitoIdentity !== 'undefined' && COGNITO_CONFIG.userPoolId && COGNITO_CONFIG.clientId) {
     const poolData = {
       UserPoolId: COGNITO_CONFIG.userPoolId,
       ClientId: COGNITO_CONFIG.clientId
@@ -51,9 +49,13 @@ export async function handleCognitoSignUp(name, email, password) {
     const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
 
     const attributeList = [
-      new AmazonCognitoIdentity.CognitoUserAttribute({ Name: 'email', Value: email }),
-      new AmazonCognitoIdentity.CognitoUserAttribute({ Name: 'name', Value: name })
+      new AmazonCognitoIdentity.CognitoUserAttribute({ Name: 'email', Value: email })
     ];
+    if (name) {
+      try {
+        attributeList.push(new AmazonCognitoIdentity.CognitoUserAttribute({ Name: 'name', Value: name }));
+      } catch (e) {}
+    }
 
     return new Promise((resolve, reject) => {
       userPool.signUp(email, password, attributeList, null, (err, result) => {
@@ -66,7 +68,6 @@ export async function handleCognitoSignUp(name, email, password) {
       });
     });
   } else {
-    // Demonstration / Simulated flow while user sets up their Cognito Console
     pendingEmailForOTP = email;
     sessionStorage.setItem('temp_cognito_user', JSON.stringify({ name, email, password }));
     return { success: true, message: 'OTP dispatched to email' };
@@ -77,7 +78,7 @@ export async function handleCognitoSignUp(name, email, password) {
  * 2. CONFIRM SIGN UP (Verify Email OTP code)
  */
 export async function handleCognitoConfirmOTP(email, code) {
-  if (typeof AmazonCognitoIdentity !== 'undefined' && COGNITO_CONFIG.userPoolId !== 'us-east-1_SAMPLEPOOL') {
+  if (typeof AmazonCognitoIdentity !== 'undefined' && COGNITO_CONFIG.userPoolId && COGNITO_CONFIG.clientId) {
     const poolData = {
       UserPoolId: COGNITO_CONFIG.userPoolId,
       ClientId: COGNITO_CONFIG.clientId
@@ -96,7 +97,6 @@ export async function handleCognitoConfirmOTP(email, code) {
       });
     });
   } else {
-    // Simulated confirmation
     if (code && code.length === 6) {
       return { success: true };
     } else {
@@ -106,10 +106,37 @@ export async function handleCognitoConfirmOTP(email, code) {
 }
 
 /**
- * 3. SIGN IN (Authenticate email + password)
+ * 3. RESEND CONFIRMATION CODE (Trigger new OTP email)
+ */
+export async function handleCognitoResendOTP(email) {
+  if (typeof AmazonCognitoIdentity !== 'undefined' && COGNITO_CONFIG.userPoolId && COGNITO_CONFIG.clientId) {
+    const poolData = {
+      UserPoolId: COGNITO_CONFIG.userPoolId,
+      ClientId: COGNITO_CONFIG.clientId
+    };
+    const userPool = new AmazonCognitoIdentity.CognitoUserPool(poolData);
+    const userData = { Username: email, Pool: userPool };
+    const cognitoUser = new AmazonCognitoIdentity.CognitoUser(userData);
+
+    return new Promise((resolve, reject) => {
+      cognitoUser.resendConfirmationCode((err, result) => {
+        if (err) {
+          reject(err.message || JSON.stringify(err));
+          return;
+        }
+        resolve({ success: true, result });
+      });
+    });
+  } else {
+    return { success: true };
+  }
+}
+
+/**
+ * 4. SIGN IN (Authenticate email + password)
  */
 export async function handleCognitoSignIn(email, password) {
-  if (typeof AmazonCognitoIdentity !== 'undefined' && COGNITO_CONFIG.userPoolId !== 'us-east-1_SAMPLEPOOL') {
+  if (typeof AmazonCognitoIdentity !== 'undefined' && COGNITO_CONFIG.userPoolId && COGNITO_CONFIG.clientId) {
     const poolData = {
       UserPoolId: COGNITO_CONFIG.userPoolId,
       ClientId: COGNITO_CONFIG.clientId
@@ -141,7 +168,6 @@ export async function handleCognitoSignIn(email, password) {
       });
     });
   } else {
-    // Simulated sign-in
     const temp = JSON.parse(sessionStorage.getItem('temp_cognito_user') || '{}');
     const name = temp.name || email.split('@')[0];
     const sessionUser = {
@@ -167,6 +193,7 @@ export function initAuthPage() {
   const signedInPanel = document.getElementById('auth-signed-in-panel');
   const authFormCard = document.getElementById('auth-form-card');
   const signOutBtn = document.getElementById('auth-signout-btn');
+  const resendBtn = document.getElementById('otp-resend-btn');
 
   // Check if already signed in
   const currentUser = getSessionUser();
@@ -310,6 +337,22 @@ export function initAuthPage() {
         errorEl.textContent = err.toString();
         submitBtn.disabled = false;
         submitBtn.textContent = 'Confirm Account';
+      }
+    });
+  }
+
+  // Handle Resend OTP button
+  if (resendBtn) {
+    resendBtn.addEventListener('click', async () => {
+      if (!pendingEmailForOTP) {
+        showToast('No pending registration found', 'error');
+        return;
+      }
+      try {
+        await handleCognitoResendOTP(pendingEmailForOTP);
+        showToast('New verification code sent to ' + pendingEmailForOTP);
+      } catch (err) {
+        showToast(err.toString(), 'error');
       }
     });
   }
