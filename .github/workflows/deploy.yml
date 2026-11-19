@@ -1,0 +1,87 @@
+name: CI/CD Pipeline — Test, Docker & Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  # =========================================================================
+  # STAGE 1: TEST STAGE
+  # =========================================================================
+  test-stage:
+    name: 1. Automated Test Stage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Validate Production Structure & Syntax
+        run: |
+          echo "Running syntax and integrity tests..."
+          REQUIRED_PAGES=("index.html" "cart.html" "checkout.html" "processing.html" "confirmation.html" "login.html")
+          for page in "${REQUIRED_PAGES[@]}"; do
+            test -f "$page" || (echo "Missing $page" && exit 1)
+          done
+          for script in js/*.js; do
+            node --check "$script"
+          done
+          echo "Test Stage PASSED: Codebase verified."
+
+  # =========================================================================
+  # STAGE 2: DOCKER IMAGE & CONTAINER STAGE
+  # =========================================================================
+  docker-stage:
+    name: 2. Docker Image & Container Build
+    needs: test-stage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker Container Image
+        run: |
+          echo "Building production Docker container..."
+          docker build -t kilnclay:${{ github.sha }} -t kilnclay:latest .
+          echo "Docker Stage PASSED: Image kilnclay:latest built successfully."
+
+  # =========================================================================
+  # STAGE 3: DEPLOY IN THE EC2 STAGE
+  # =========================================================================
+  deploy-ec2-stage:
+    name: 3. Deploy to EC2 Server
+    needs: docker-stage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Execute Remote SSH Deployment on EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          port: 22
+          script: |
+            echo "Starting deployment on EC2 server..."
+            cd ~/kilnclay || git clone https://github.com/jacksamson1503/kilnclay.git ~/kilnclay
+            cd ~/kilnclay
+            git pull origin main
+            
+            # Deploy latest static files to Nginx web root
+            sudo rm -rf /var/www/html/*
+            sudo cp -r * /var/www/html/
+            sudo chmod -R 755 /var/www/html/
+            
+            # Restart Nginx service
+            sudo systemctl restart nginx
+            
+            # Verify HTTP response
+            curl -I http://localhost
+            echo "DEPLOYMENT COMPLETE: KILN & CLAY is live on EC2!"

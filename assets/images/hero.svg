@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#ECE5D8"/>
+  <circle cx="250" cy="230" r="150" fill="#B5472B"/>
+  <ellipse cx="250" cy="380" rx="140" ry="24" fill="#CBB59D"/>
+  <path d="M180 140 Q250 110 320 140 L300 240 Q250 260 200 240 Z" fill="#1B1A17"/>
+  <path d="M170 240 Q250 220 330 240 L300 380 Q250 400 200 380 Z" fill="#B5472B"/>
+  <line x1="60" y1="440" x2="440" y2="440" stroke="#1B1A17" stroke-width="1.5"/>
+</svg>

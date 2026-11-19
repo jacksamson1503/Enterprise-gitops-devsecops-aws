@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" width="100%" height="100%">
+  <rect width="100%" height="100%" fill="#EAE3D6"/>
+  <rect x="110" y="80" width="180" height="340" fill="#FDFBF7" stroke="#D8D0C2"/>
+  <line x1="130" y1="80" x2="130" y2="420" stroke="#5A6351" stroke-width="3"/>
+  <line x1="170" y1="80" x2="170" y2="420" stroke="#B5472B" stroke-width="1.5"/>
+  <line x1="270" y1="80" x2="270" y2="420" stroke="#1B1A17" stroke-width="1"/>
+</svg>

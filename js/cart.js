@@ -19,7 +19,14 @@ const VALID_PROMOS = {
 export function getCartItems() {
   try {
     const raw = localStorage.getItem(CART_STORAGE_KEY);
-    return raw ? JSON.parse(raw) : [];
+    const items = raw ? JSON.parse(raw) : [];
+    return items.map(item => {
+      const prod = getProductById(item.id);
+      if (prod) {
+        item.image = prod.image;
+      }
+      return item;
+    });
   } catch (e) {
     console.error('Failed to parse cart items:', e);
     return [];
