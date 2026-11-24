@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: kilnclay-container
-        image: 181188392988.dkr.ecr.us-east-1.amazonaws.com/server:latest
+        image: 181188392988.dkr.ecr.us-east-1.amazonaws.com/server:e4fbff6
         imagePullPolicy: Always
         ports:
         - containerPort: 80
