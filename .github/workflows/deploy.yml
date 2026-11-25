@@ -1,4 +1,4 @@
-name: Enterprise CI/CD Pipeline - Test, Scan, ECR & GitOps Sync
+name: Enterprise CI/CD Pipeline - Test, Scan, ECR and GitOps Sync
 
 on:
   push:
@@ -29,7 +29,7 @@ jobs:
   # STAGE 1: CODE INTEGRITY TESTS
   # ===========================================================================
   code-quality-and-test:
-    name: 1. Code Integrity & Syntax Check
+    name: 1. Code Integrity and Syntax Check
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -40,7 +40,7 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Run Integrity & Syntax Tests
+      - name: Run Integrity and Syntax Tests
         run: |
           REQUIRED_PAGES=("index.html" "cart.html" "checkout.html" "processing.html" "confirmation.html" "login.html")
           for page in "${REQUIRED_PAGES[@]}"; do
@@ -52,10 +52,10 @@ jobs:
           echo "STAGE 1 PASSED: Codebase verified."
 
   # ===========================================================================
-  # STAGE 2: BUILD -> TRIVY SCAN -> PUSH TO ECR (With Direct AI Diagnostics)
+  # STAGE 2: BUILD, SCAN AND PUSH TO ECR
   # ===========================================================================
   build-scan-push:
-    name: 2. Build, Scan & Push to ECR
+    name: 2. Build, Scan and Push to ECR
     needs: code-quality-and-test
     runs-on: ubuntu-latest
     outputs:
@@ -69,12 +69,10 @@ jobs:
         id: set-tag
         run: echo "tag=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
 
-      # Configures AWS Credentials (supports both OIDC and Access Keys)
       - name: Configure AWS Credentials
         id: aws_login
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
@@ -98,14 +96,12 @@ jobs:
         run: |
           docker push "${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ steps.set-tag.outputs.tag }}"
 
-      # -----------------------------------------------------------------------
-      # AI ANALYSIS (Runs directly on failure, reads real local logs!)
-      # -----------------------------------------------------------------------
       - name: AI Failure Diagnosis
         id: ai_diag
         if: failure()
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ env.GEMINI_MODEL }}
         run: |
           LOG_TAIL=$(tail -n 60 build.log 2>/dev/null || echo "Failure occurred before or during Docker/AWS authentication step.")
           CLEAN_LOG=$(echo "$LOG_TAIL" | sed -E 's/AKIA[0-9A-Z]{16}/[REDACTED]/g; s/[0-9]{12}/[REDACTED]/g')
@@ -153,11 +149,11 @@ jobs:
       - name: Write Deployment Summary
         if: success()
         run: |
-          echo "## Blue/Green Rollout Updated!" >> $GITHUB_STEP_SUMMARY
+          echo "## Blue/Green Rollout Updated" >> $GITHUB_STEP_SUMMARY
           echo "Argo CD will automatically sync the new version to Kubernetes." >> $GITHUB_STEP_SUMMARY
 
   # ===========================================================================
-  # STAGE 4: AWS SNS NOTIFICATION (Success & Failure)
+  # STAGE 4: AWS SNS NOTIFICATION
   # ===========================================================================
   notify-sns:
     name: Send SNS Notification
@@ -169,7 +165,6 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         continue-on-error: true
         with:
-          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
@@ -181,7 +176,7 @@ jobs:
           AI_DIAGNOSIS: ${{ needs.build-scan-push.outputs.diagnosis }}
         run: |
           MESSAGE="Pipeline ${STATUS} for commit ${GITHUB_SHA::7}.
-          
+
           AI Diagnosis:
           ${AI_DIAGNOSIS:-All stages completed successfully.}"
 
