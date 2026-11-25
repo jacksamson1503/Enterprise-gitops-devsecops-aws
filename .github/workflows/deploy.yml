@@ -159,7 +159,7 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
   # ===========================================================================
-  #  AI FAILURE DOCTOR: Analyzes failures and writes fixes to GitHub Summary
+  # AI FAILURE ANALYSIS: Analyzes failures and writes fixes to GitHub Summary
   # ===========================================================================
   ai-analysis:
     name: AI Pipeline Failure analysis
@@ -243,7 +243,7 @@ jobs:
       - code-quality-and-test
       - build-scan-push
       - update-gitops-manifest
-      - ai-failure-doctor
+      - ai-analysis
     if: ${{ always() }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -263,7 +263,7 @@ jobs:
           R_BUILD: ${{ needs.build-scan-push.result }}
           R_GITOPS: ${{ needs.update-gitops-manifest.result }}
           IMAGE_TAG: ${{ needs.build-scan-push.outputs.image_tag }}
-          AI_DIAGNOSIS: ${{ needs.ai-failure-doctor.outputs.diagnosis }}
+          AI_DIAGNOSIS: ${{ needs.ai-analysis.outputs.diagnosis }}
           COMMIT_MSG: ${{ github.event.head_commit.message }}
           ACTOR: ${{ github.actor }}
           REPO: ${{ github.repository }}
