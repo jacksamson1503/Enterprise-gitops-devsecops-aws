@@ -1,131 +1,217 @@
-# KILN & CLAY — Editorial Print-Inspired E-Commerce Platform
+# Kiln & Clay — Enterprise Cloud-Native GitOps & DevSecOps Platform on AWS
 
-An independent, print-inspired storefront designed with a custom art-directed identity. Built with semantic HTML5, modern CSS3 (Flexbox, Grid, CSS custom properties), vanilla ES6+ modules, and a calm, tactile Three.js (r160) paper-craft packing studio.
+[![AWS](https://img.shields.io/badge/AWS-Cloud_Infrastructure-232F3E?style=for-the-badge&logo=amazon-aws&logoColor=white)](https://aws.amazon.com/)
+[![Kubernetes](https://img.shields.io/badge/Kubernetes-K3s_Cluster-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white)](https://kubernetes.io/)
+[![ArgoCD](https://img.shields.io/badge/Argo_CD-GitOps_Continuous_Delivery-EF7B4D?style=for-the-badge&logo=argo&logoColor=white)](https://argo-cd.readthedocs.io/)
+[![Argo Rollouts](https://img.shields.io/badge/Argo_Rollouts-Blue%2FGreen_Zero_Downtime-4D90FE?style=for-the-badge&logo=argo&logoColor=white)](https://argoproj.github.io/rollouts/)
+[![GitHub Actions](https://img.shields.io/badge/GitHub_Actions-Enterprise_CI%2FCD-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)](https://github.com/features/actions)
+[![Trivy](https://img.shields.io/badge/Trivy-Container_Security_Scan-1904DA?style=for-the-badge&logo=aquasecurity&logoColor=white)](https://trivy.dev/)
+[![Google Gemini](https://img.shields.io/badge/Google_Gemini-AI_Failure_Analysis-8E75B2?style=for-the-badge&logo=google&logoColor=white)](https://ai.google.dev/)
+[![Grafana](https://img.shields.io/badge/Grafana-Prometheus_Observability-F46800?style=for-the-badge&logo=grafana&logoColor=white)](https://grafana.com/)
 
----
-
-## 1. Design Direction: Unique, Human & Print-Inspired
-
-Unlike typical AI-generated interfaces or generic bootstrap templates, this storefront adheres to strict art-direction principles:
-* **Editorial Paper Palette**:
-  - Background: Warm unbleached paper newsprint (`#F4EFE6`)
-  - Typography: Dense typographic charcoal-ink (`#1B1A17`)
-  - Primary Accent: Terracotta ink (`#B5472B`)
-  - Secondary Accents: Muted olive (`#5A6351`) and structural paper tint (`#ECE5D8`)
-* **Banned Elements**:
-  - No dark navy/black voids
-  - No purple-to-blue or pink gradients
-  - No neon glow or bloom effects
-  - No glassmorphism or floating blurred blobs
-  - No card drop shadows
-* **Typography Pairing**:
-  - Headings: **Fraunces** (characterful high-contrast optical serif)
-  - Body: **Instrument Sans** (crisp geometric grotesque)
-  - Tabular numerals (`tabular-nums`) for currency and order references
-* **Zero Icons Standard**:
-  - Completely free of icon fonts, SVG icon sets, emoji, or pictograms.
-  - All communication is delivered via typography, numbers, hairlines, and words ("Bag [3]", "Remove", "Confirmed").
+An end-to-end, enterprise-grade cloud-native e-commerce platform and DevSecOps ecosystem. Built on a multi-tier custom AWS Virtual Private Cloud (VPC), utilizing lightweight Kubernetes with Argo CD and Argo Rollouts for automated Blue/Green deployments, backed by private Amazon RDS (MySQL), monitored with Prometheus and Grafana, and powered by AI-augmented failure diagnostics.
 
 ---
 
-## 2. Currency & Financial Specification (Indian Rupees — ₹)
-
-* Every price across the platform is displayed exclusively in Indian Rupees (`₹` INR) using the single pure helper:
-  ```js
-  new Intl.NumberFormat('en-IN', {
-    style: 'currency',
-    currency: 'INR',
-    maximumFractionDigits: 0
-  }).format(amount)
-  ```
-* **Shipping Rules**: Free delivery above ₹999; otherwise flat ₹49.
-* **Statutory Taxes**: 18% standard Indian GST computed and displayed itemized on the packing invoice.
-* **Promo Vouchers**: Supports promo codes `STUDIO10` (10% off) and `EDITION15` (15% off).
-
----
-
-## 3. Project Structure
+## Architecture Overview
 
 ```
-project/
-├── index.html            -> Home / asymmetric catalogue of editions
-├── cart.html             -> Bag review & printed packing manifest
-├── checkout.html         -> Indian dispatch specification & settlement form
-├── processing.html       -> 3D tactile paper-craft studio animation
-├── confirmation.html     -> Order confirmed page with ink-drawn rule & receipt
-├── css/
-│   ├── variables.css     -> Editorial paper, ink, terracotta design tokens
-│   ├── base.css          -> Typography, reset, tabular numerals, focus states
-│   ├── components.css    -> Buttons, cards, forms, masthead, toasts (zero icons)
-│   ├── pages.css         -> Catalogue grid, invoice tables, checkout layouts
-│   └── processing.css    -> Tactile studio HUD, 2px progress bar, paper-wipe
-├── js/
-│   ├── app.js            -> Masthead bag counter, catalogue filters, router
-│   ├── products.js       -> 8 curated studio physical goods with duotone SVG art
-│   ├── cart.js           -> LocalStorage bag state, voucher logic, totals
-│   ├── checkout.js       -> 10-digit Indian mobile & 6-digit PIN validation
-│   ├── scene3d.js        -> Three.js (r160) kraft box, falling cards, ribbon
-│   ├── processing.js     -> Step timeline (01-04), microcopy, paper-wipe redirect
-│   ├── confirmation.js   -> Order summary display, print receipt trigger
-│   └── utils.js          -> formatINR(), calculateTotals(), generateOrderId()
-└── README.md
+                                [ DEVELOPER ]
+                                      │
+                                      ▼
+                        [ GitHub Repository (main) ]
+                                      │
+                 ┌────────────────────┴────────────────────┐
+                 ▼                                         ▼
+      [ PR Quality Gate ]                     [ Main CI/CD Pipeline ]
+      • Linting & Syntax Tests                • 1. Code Integrity Tests
+      • Docker Build Validation               • 2. Build Docker Container
+      • 🤖 Gemini AI Error Diagnostics        • 3. Trivy Security Scan (Block Critical)
+                                              • 4. Push Image to Amazon ECR
+                                              • 5. GitOps Auto-Promote (rollout.yaml)
+                                              • 6. 🤖 Gemini AI Failure Analysis
+                                              • 7. AWS SNS Real-Time Notifications
+                                                           │
+                                                           ▼
+                                                [ Amazon ECR (Private) ]
+                                                           │
+┌──────────────────────────────────────────────────────────┼──────────────────────────────────────────────────────────┐
+│ AWS Custom VPC (10.0.0.0/16)                             ▼                                                          │
+│                                              [ Argo CD Controller ]                                                 │
+│                                                          │                                                          │
+│                                                (Syncs Git Manifest)                                                 │
+│                                                          ▼                                                          │
+│                                            [ Argo Rollouts Controller ]                                             │
+│                                                          │                                                          │
+│   PUBLIC SUBNETS (10.0.1.0/24, 10.0.2.0/24)             ▼                                                          │
+│   • Internet Gateway                                                                                                │
+│   • Traefik Ingress (Port 80) ──────────────► [ Active Service (Port 30080) ] ────► [ Active Pods (Blue rev:3) ]    │
+│   • NAT Gateways (Outbound Internet)          [ Preview Service (Port 30081) ] ───► [ Staging Pods (Green rev:2) ] │
+│                                                                                            │                        │
+│   PRIVATE DATABASE SUBNETS (10.0.3.0/24, 10.0.4.0/24)                                      ▼                        │
+│   • Amazon RDS MySQL Database (Isolated, 0% Public Access) ◄───────────────────────────────┘                        │
+└─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────┘
+                                                           │
+                                                           ▼
+                                         [ Observability Stack (Port 3000) ]
+                                         • Prometheus Metric Scraper
+                                         • Grafana Live Dashboards (Node Exporter)
 ```
 
 ---
 
-## 4. Key Pages & Features
+## 1. Live Production Storefront
 
-1. **Home (`index.html`)**:
-   - Masthead-style top bar and brand mark.
-   - Large serif headline and editorial manifesto.
-   - Filterable catalogue grid (Ceramics, Textiles, Objects, Paper) with text search.
-   - Product cards featuring duotone vector artwork, edition numbering, tabular ₹ prices, and "Add to bag" text links.
+The production application is an editorial e-commerce platform served through Nginx containers on Kubernetes with custom ingress routing.
 
-2. **Bag / Cart (`cart.html`)**:
-   - Laid out like a printed warehouse packing manifest.
-   - Item controls: `+` and `-` quantity steppers, text `Remove` button.
-   - Promotional voucher code validation (`STUDIO10`, `EDITION15`).
-   - Itemized invoice breakdown with subtotal, statutory 18% GST, shipping, and grand total.
+![Live Storefront](assets/screenshots/01-live-storefront.png)
 
-3. **Dispatch Specification (`checkout.html`)**:
-   - Numbered sections (01 Recipient, 02 Physical Premises, 03 Settlement Protocol).
-   - Validation for 10-digit Indian mobile numbers (`^[6-9]\d{9}$`) and 6-digit PIN codes (`^\d{6}$`).
-   - Complete list of Indian States and Union Territories.
-   - Text payment options: UPI & Instant Netbanking, Credit or Debit Card, Cash on Delivery.
-   - Live invoice sidebar and "Place order" button with loading state.
-
-4. **3D Virtual Animation Studio (`processing.html`)**:
-   - Ambient paper-craft packing studio built in Three.js (r160) with soft real shadow mapping.
-   - Matte kraft paper box with folding flaps, falling paper cards, terracotta ribbon seal, and tactile bounce.
-   - Mouse/touch parallax response.
-   - Flat paper HUD with oversized serif percentage, 2px progress bar, quiet typographic loader strip, and struck-through step tracker.
-   - Clean terracotta paper-wipe transition into confirmation.
-   - Pure CSS paper-folding fallback if WebGL is unavailable.
-
-5. **Confirmation (`confirmation.html`)**:
-   - Oversized serif headline: "Your order is confirmed."
-   - Animated ink-drawn underline rule (no checkmark icons).
-   - Large unique order reference ID (e.g. `ORD-2026-48213`).
-   - Customer dispatch address and scheduled delivery date.
-   - Itemized manifest table and print-ready stylesheet for `Print receipt`.
+* **Cluster Endpoint:** `http://32.197.36.240:30080` (or Port 80 via Traefik Ingress)
+* **Features:** Responsive catalog, dynamic cart calculations, real-time checkout, and persistent storage.
 
 ---
 
-## 5. How to Run Locally
+## 2. GitOps Continuous Delivery & Zero-Downtime Blue/Green Deployments
 
-You can serve the project using any static file server:
+Argo CD maintains continuous synchronization between the `main` branch of this repository and the live Kubernetes cluster. Argo Rollouts manages progressive Blue/Green delivery.
 
-### Option A: Using `npx serve` (Node.js)
-```bash
-npx serve .
+![Argo CD Blue/Green Tree](assets/screenshots/02-argocd-bluegreen.jpg)
+
+### Blue/Green Mechanics
+1. **Zero Downtime Deployments:** When a new container image is pushed to ECR, the pipeline updates `k8s/rollout.yaml`. Argo CD detects the change and creates a new ReplicaSet (`rev:3`).
+2. **Automated Traffic Switching:** New pods are spun up on the `kilnclay-preview-service` (Port 30081). Once all health probes succeed, traffic switches instantly to `kilnclay-active-service` (Port 30080).
+3. **Graceful Connection Draining (`scaleDownDelaySeconds: 30`):** The previous revision (`rev:2`) remains alive for 30 seconds to allow active customer checkout sessions to complete without interruption.
+4. **Instant 1-Click Rollback:** Old revisions (`rev:1`, `rev:2`) are maintained with 0 pods as persistent markers, enabling instant rollbacks if unexpected production issues occur.
+
+---
+
+## 3. Enterprise CI/CD Pipeline with DevSecOps & AI Diagnostics
+
+The automated GitHub Actions workflow enforces quality gates, security compliance, immutable tagging, and AI-powered failure resolution.
+
+![GitHub Actions Pipeline](assets/screenshots/03-github-actions-cicd.png)
+
+### Key Pipeline Stages
+* **Stage 1 — Code Integrity & Syntax Check:** Validates semantic structure of HTML5 pages, executes ES6 module syntax checks with Node.js 20.
+* **Stage 2 — Container Build & Trivy Security Scan:**
+  * Builds the container using Buildx and layer caching.
+  * Scans the image with **Aquasec Trivy** for CVEs and OS library vulnerabilities.
+  * Blocks deployments immediately (`exit-code: 1`) if critical vulnerabilities are discovered.
+  * Pushes verified images tagged with immutable Git Commit SHAs (`${{ github.sha::7 }}`) to Amazon ECR.
+* **Stage 3 — GitOps Auto-Promote:** Automatically updates `image:` inside `k8s/rollout.yaml`, commits as `github-actions[bot]`, and pushes to `main` with `[skip ci]`.
+* **Stage 4 — AI Failure Analysis:**
+  * If any build step fails, an inline diagnostics step captures real-time runner logs.
+  * Redacts AWS keys and sensitive patterns.
+  * Sends log context to **Google Gemini API** (`gemini-1.5-flash`).
+  * Generates a 3-point diagnostic report (Root Cause, Code Fix, Verification Command) directly in `$GITHUB_STEP_SUMMARY`.
+* **Stage 5 — Real-time AWS SNS Notifications:** Publishes structured operational reports (including stage matrices and AI summaries) to AWS SNS topics for email broadcasting.
+
+---
+
+## 4. Amazon ECR Private Container Registry
+
+All container images are scanned, tagged with unique Git commit identifiers, and stored in a private AWS Elastic Container Registry.
+
+![Amazon ECR Registry](assets/screenshots/04-aws-ecr-registry.png)
+
+* **Repository:** `181188392988.dkr.ecr.us-east-1.amazonaws.com/server`
+* **Image Tagging Strategy:** Short Git Commit SHA (e.g. `6209f7d`, `91b5056`) + `latest` pointer.
+* **Security:** Authenticated via IAM policies; zero public pull access.
+
+---
+
+## 5. Live Observability & Metric Monitoring (Grafana + Prometheus)
+
+Cluster health, node resource consumption, and container metrics are tracked using Prometheus and visualized through Grafana dashboards.
+
+![Grafana Monitoring Dashboard](assets/screenshots/05-grafana-monitoring.jpg)
+
+* **Dashboard URL:** `http://32.197.36.240:3000`
+* **Stack:** `kube-prometheus-stack` (Prometheus Operator, Grafana, Node Exporter, Kube-State-Metrics).
+* **Metrics Monitored:**
+  * Host CPU and memory saturation.
+  * Per-pod network traffic and memory limits.
+  * Container restart counts and crash detection.
+
+---
+
+## 6. AWS 3-Tier VPC Architecture
+
+The underlying cloud infrastructure was provisioned inside a custom AWS Virtual Private Cloud (`10.0.0.0/16`) spanning multiple Availability Zones for high availability and network isolation.
+
+![AWS VPC Resource Map](assets/screenshots/06-aws-vpc-architecture.png)
+
+| Subnet Tier | CIDR Blocks | Availability Zones | Hosted Resources | Access Level |
+| :--- | :--- | :--- | :--- | :--- |
+| **Public Subnets** | `10.0.1.0/24`, `10.0.2.0/24` | `us-east-1a`, `us-east-1b` | Internet Gateway, Traefik Ingress, NAT Gateways | Public Internet (Inbound & Outbound) |
+| **Private App Subnets** | `10.0.3.0/24` | `us-east-1a` | EC2 K3s Kubernetes Cluster, Argo CD, Rollouts | Private (Outbound via NAT Gateway only) |
+| **Private DB Subnets** | `10.0.4.0/24` | `us-east-1b` | Amazon RDS MySQL Cluster | 100% Isolated (No Internet Access) |
+
+---
+
+## 7. Amazon RDS (MySQL) Database
+
+Production relational data is hosted on a managed Amazon RDS instance isolated within dedicated database subnets.
+
+![Amazon RDS Database](assets/screenshots/07-amazon-rds-database.png)
+
+* **Instance Identifier:** `devops-app-db`
+* **Engine:** MySQL Community 8.0 (`db.t3.micro`)
+* **Subnet Group:** `devops-rds-subnet-group`
+* **Security Lockdown:** Inbound port `3306` allowed **only** from the Kubernetes security group (`ec2-k8s-sg`). `Publicly Accessible: NO`.
+
+---
+
+## 8. Automated Alerting (Amazon SNS)
+
+Build completions, deployment events, and incident alerts are broadcasted through Amazon Simple Notification Service.
+
+![Amazon SNS Alerts](assets/screenshots/08-aws-sns-alerts.png)
+
+* **Topic ARN:** `arn:aws:sns:us-east-1:181188392988:aws-daily-operations-report`
+* **Subscription:** Email notifications confirmed and dispatched automatically upon pipeline execution.
+
+---
+
+## Repository Structure
+
+```text
+kilnclay/
+├── .github/
+│   └── workflows/
+│       ├── pr.yml              # Pull Request staging gate with AI failure commenter
+│       └── deploy.yml          # Production CI/CD with Trivy, ECR, GitOps sync & SNS
+├── assets/
+│   ├── images/                 # Storefront artwork & vector assets
+│   └── screenshots/            # Architecture evidence & operational screenshots
+├── css/                        # Responsive CSS3 styles (variables, components, pages)
+├── js/                         # Vanilla ES6+ modules & AWS Cognito authentication
+├── k8s/
+│   ├── rollout.yaml            # Argo Rollouts Blue/Green deployment specification
+│   ├── service.yaml            # Active (30080) and Preview (30081) NodePort services
+│   └── ingress.yaml            # Traefik Ingress routing for standard Port 80
+├── Dockerfile                  # Production-optimized Nginx Alpine container
+├── README.md                   # System documentation & architectural reference
+├── index.html                  # Catalog landing page
+├── cart.html                   # Shopping cart controller
+├── checkout.html               # Payment & dispatch flow
+├── login.html                  # Customer authentication interface
+└── package.json                # Project descriptor & test definitions
 ```
-Then open `http://localhost:3000` in your web browser.
 
-### Option B: Using Python
-```bash
-python -m http.server 8000
-```
-Then open `http://localhost:8000` in your web browser.
+---
 
-### Option C: VS Code Live Server
-Right-click `index.html` and choose **"Open with Live Server"**.
+## Recommended Repository Renaming
+
+To reflect the scope of this project on your GitHub profile and resume, rename the repository under **Settings $\rightarrow$ General $\rightarrow$ Repository name** to one of the following:
+
+* **`enterprise-devops-gitops-ai-platform`** *(Recommended)*
+* **`aws-gitops-bluegreen-devsecops`**
+* **`cloudnative-ecommerce-devops-platform`**
+
+---
+
+## License & Author
+
+* **Author:** Jack Samson C ([@jacksamson1503](https://github.com/jacksamson1503))
+* **License:** MIT
