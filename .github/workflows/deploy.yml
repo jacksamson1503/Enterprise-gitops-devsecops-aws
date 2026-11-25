@@ -1,4 +1,4 @@
-name: Enterprise CI/CD Pipeline — Test, Scan, ECR & GitOps Sync
+name: Enterprise CI/CD Pipeline - Test, Scan, ECR & GitOps Sync
 
 on:
   push:
@@ -6,22 +6,37 @@ on:
       - main
     paths-ignore:
       - 'k8s/**'
+  workflow_dispatch:
 
+# Least privilege security by default
 permissions:
-  contents: write
+  contents: read
+
+# Prevent concurrent deployments from overwriting k8s/rollout.yaml
+concurrency:
+  group: deploy-main
+  cancel-in-progress: false
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REGISTRY: 181188392988.dkr.ecr.us-east-1.amazonaws.com
+  ECR_REPOSITORY: server
+  SNS_TOPIC_ARN: arn:aws:sns:us-east-1:181188392988:aws-daily-operations-report
+  GEMINI_MODEL: gemini-1.5-flash
 
 jobs:
-  # =========================================================================
-  # STAGE 1: CODE INTEGRITY TESTS
-  # =========================================================================
+  # ===========================================================================
+  # STAGE 1: CODE INTEGRITY & SYNTAX TESTS
+  # ===========================================================================
   code-quality-and-test:
     name: 1. Code Integrity & Syntax Check
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Setup Node.js Environment
         uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -30,42 +45,27 @@ jobs:
         run: |
           REQUIRED_PAGES=("index.html" "cart.html" "checkout.html" "processing.html" "confirmation.html" "login.html")
           for page in "${REQUIRED_PAGES[@]}"; do
-            test -f "$page" || (echo "FAILED: Missing $page" && exit 1)
+            test -f "$page" || { echo "::error::Missing required page: $page"; exit 1; }
           done
+
           for script in js/*.js; do
-            [ -f "$script" ] && node --check "$script"
+            if [ -f "$script" ]; then
+              node --check "$script" || { echo "::error::Syntax error in $script"; exit 1; }
+            fi
           done
           echo "STAGE 1 PASSED: Codebase verified."
 
-  # =========================================================================
-  # STAGE 2: TRIVY SECURITY SCAN
-  # =========================================================================
-  security-scan:
-    name: 2. Container Security Scan
+  # ===========================================================================
+  # STAGE 2: BUILD ONCE -> TRIVY SCAN -> PUSH TO AMAZON ECR
+  # ===========================================================================
+  build-scan-push:
+    name: 2. Build, Scan & Push to ECR
     needs: code-quality-and-test
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Build Local Image for Scan
-        run: docker build -t kilnclay-local:${{ github.sha }} .
-
-      - name: Scan Image with Trivy
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: kilnclay-local:${{ github.sha }}
-          format: 'table'
-          exit-code: '0'
-          severity: 'CRITICAL,HIGH'
-
-  # =========================================================================
-  # STAGE 3: BUILD & PUSH TO AWS ECR
-  # =========================================================================
-  build-and-push-ecr:
-    name: 3. Push to Amazon ECR
-    needs: security-scan
-    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      id-token: write   # Required for AWS OIDC
+      contents: read
     outputs:
       image_tag: ${{ steps.set-tag.outputs.tag }}
     steps:
@@ -74,92 +74,272 @@ jobs:
 
       - name: Set Short Commit SHA Tag
         id: set-tag
-        run: echo "tag=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+        run: echo "tag=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
 
-      - name: Configure AWS Credentials
+      - name: Configure AWS Credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Log in to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build, Tag & Push Docker Image
-        env:
-          REGISTRY: 181188392988.dkr.ecr.us-east-1.amazonaws.com
-          REPOSITORY: server
-          IMAGE_TAG: ${{ steps.set-tag.outputs.tag }}
-        run: |
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t $REGISTRY/$REPOSITORY:latest .
-          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
-          docker push $REGISTRY/$REPOSITORY:latest
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-  # =========================================================================
-  # STAGE 4: GITOPS AUTO-UPDATE (Argo Rollouts Blue/Green)
-  # =========================================================================
+      - name: Build Docker Image Locally (Not pushed yet)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          push: false
+          tags: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ steps.set-tag.outputs.tag }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Blocks the pipeline if any CRITICAL vulnerability is found!
+      - name: Scan Image with Trivy
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ steps.set-tag.outputs.tag }}
+          format: 'table'
+          exit-code: '1'
+          severity: 'CRITICAL'
+          ignore-unfixed: true
+
+      - name: Push Scanned Image to Amazon ECR
+        run: docker push "${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ steps.set-tag.outputs.tag }}"
+
+  # ===========================================================================
+  # STAGE 3: GITOPS - AUTO-UPDATE ARGO ROLLOUT (Blue/Green Deployment)
+  # ===========================================================================
   update-gitops-manifest:
-    name: 4. Auto-Update Argo Rollout Manifest
-    needs: build-and-push-ecr
+    name: 3. Update Argo Rollout Manifest
+    needs: build-scan-push
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Update Image in k8s/rollout.yaml
+      - name: Update Image Tag in k8s/rollout.yaml
         env:
-          NEW_TAG: ${{ needs.build-and-push-ecr.outputs.image_tag }}
+          IMAGE_REPO: ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}
+          NEW_TAG: ${{ needs.build-scan-push.outputs.image_tag }}
         run: |
-          sed -i "s|image: 181188392988.dkr.ecr.us-east-1.amazonaws.com/server:.*|image: 181188392988.dkr.ecr.us-east-1.amazonaws.com/server:$NEW_TAG|g" k8s/rollout.yaml
-          
+          sed -i -E "s|(image: ${IMAGE_REPO}):.*|\1:${NEW_TAG}|g" k8s/rollout.yaml
+
+          # Verify that the image tag was actually updated
+          grep -q "image: ${IMAGE_REPO}:${NEW_TAG}" k8s/rollout.yaml \
+            || { echo "::error::Image line not updated in k8s/rollout.yaml"; exit 1; }
+
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add k8s/rollout.yaml
-          git commit -m "chore(gitops): promote image $NEW_TAG to Blue/Green [skip ci]" || echo "No changes"
+          git commit -m "chore(gitops): promote image ${NEW_TAG} to Blue/Green [skip ci]" || echo "No changes to commit"
+          git pull --rebase origin main
           git push origin main
 
-      # =========================================================================
-      # SUCCESS SUMMARY: Formats a clean card on GitHub Job Summary!
-      # =========================================================================
-      - name: 5. Write Deployment Summary
+      - name: Write Deployment Summary to GitHub
         if: success()
+        env:
+          NEW_TAG: ${{ needs.build-scan-push.outputs.image_tag }}
         run: |
-          echo "## Deployment Succeeded!" >> $GITHUB_STEP_SUMMARY
-          echo "| Attribute | Value |" >> $GITHUB_STEP_SUMMARY
-          echo "| :--- | :--- |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Commit SHA** | \`${{ needs.build-and-push-ecr.outputs.image_tag }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| **ECR Image** | \`181188392988.dkr.ecr.us-east-1.amazonaws.com/server:${{ needs.build-and-push-ecr.outputs.image_tag }}\` |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Deployment Strategy** | **Blue/Green (Argo Rollouts)** |" >> $GITHUB_STEP_SUMMARY
-          echo "| **Argo CD Status** | Synced to Kubernetes Cluster |" >> $GITHUB_STEP_SUMMARY
+          {
+            echo "##  Deployment Manifest Updated!"
+            echo "| Attribute | Value |"
+            echo "| :--- | :--- |"
+            echo "| **Commit SHA** | \`${NEW_TAG}\` |"
+            echo "| **ECR Image** | \`${ECR_REGISTRY}/${ECR_REPOSITORY}:${NEW_TAG}\` |"
+            echo "| **Strategy** | **Blue/Green (Argo Rollouts)** |"
+            echo "| **Status** | Argo CD will auto-sync to your cluster |"
+          } >> "$GITHUB_STEP_SUMMARY"
 
-  # =========================================================================
-  # GLOBAL AI FAILURE DOCTOR: Catches errors if ANY job fails!
-  # =========================================================================
-  ai-failure-doctor:
-    name: AI Pipeline Failure Doctor
-    if: failure()
-    needs: [code-quality-and-test, security-scan, build-and-push-ecr, update-gitops-manifest]
+  # ===========================================================================
+  #  AI FAILURE DOCTOR: Analyzes failures and writes fixes to GitHub Summary
+  # ===========================================================================
+  ai-analysis:
+    name: AI Pipeline Failure analysis
+    needs: [code-quality-and-test, build-scan-push, update-gitops-manifest]
+    if: ${{ always() && contains(needs.*.result, 'failure') }}
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      actions: read
+      contents: read
+    outputs:
+      diagnosis: ${{ steps.diagnose.outputs.diagnosis }}
     steps:
       - name: Diagnose Failure with AI
+        id: diagnose
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
         run: |
-          echo "## Pipeline Failed!" >> $GITHUB_STEP_SUMMARY
-          echo "Analyzing root cause with AI..." >> $GITHUB_STEP_SUMMARY
+          set +e
 
-          PROMPT="A production CI/CD pipeline on main branch failed during testing, Docker build, Trivy scan, or ECR push. In 3 simple sentences, explain the common reasons for this failure and give the troubleshooting commands."
+          # 1. Identify the failed job
+          FAILED=$(gh api "repos/$REPO/actions/runs/$RUN_ID/jobs" \
+            --jq '([.jobs[] | select(.conclusion=="failure")][0] // empty) | "\(.id)\t\(.name)"')
+          IFS=$'\t' read -r FAILED_JOB_ID FAILED_JOB_NAME <<< "$FAILED"
 
-          if [ -n "$GEMINI_API_KEY" ]; then
-            AI_ANALYSIS=$(curl -s "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$GEMINI_API_KEY" \
-              -H 'Content-Type: application/json' \
-              -d "{\"contents\": [{\"parts\": [{\"text\": \"$PROMPT\"}]}]}" | jq -r '.candidates[0].content.parts[0].text' 2>/dev/null || echo "Inspect step logs above.")
-            
-            echo "### AI Diagnosis & Next Steps:" >> $GITHUB_STEP_SUMMARY
-            echo "$AI_ANALYSIS" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "To get automated AI fix recommendations, please add the GEMINI_API_KEY secret." >> $GITHUB_STEP_SUMMARY
+          # 2. Extract and scrub sensitive information from the log
+          LOG_TAIL=""
+          if [ -n "$FAILED_JOB_ID" ]; then
+            LOG_TAIL=$(gh api "repos/$REPO/actions/jobs/$FAILED_JOB_ID/logs" 2>/dev/null \
+              | tail -n 120 \
+              | sed -E 's/AKIA[0-9A-Z]{16}/[REDACTED_AWS_KEY]/g; s/[0-9]{12}/[REDACTED_12_DIGITS]/g' \
+              | cut -c1-400)
           fi
+
+          AI_TEXT=""
+          if [ -n "$GEMINI_API_KEY" ] && [ -n "$LOG_TAIL" ]; then
+            PROMPT=$(cat <<EOF
+          You are a senior DevOps engineer. A GitHub Actions job failed.
+          Reply in plain text only (no markdown), maximum 5 short lines:
+          1) Root cause
+          2) How to fix it
+          3) Command to verify
+          Failed job: ${FAILED_JOB_NAME}
+          -----BEGIN LOG-----
+          ${LOG_TAIL}
+          -----END LOG-----
+          EOF
+            )
+            RESPONSE=$(curl -sS --max-time 40 \
+              "https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${GEMINI_API_KEY}" \
+              -H "Content-Type: application/json" \
+              -d "$(jq -n --arg p "$PROMPT" '{contents:[{parts:[{text:$p}]}]}')")
+            AI_TEXT=$(echo "$RESPONSE" | jq -r '.candidates[0].content.parts[0].text // empty' 2>/dev/null)
+          fi
+
+          if [ -z "$AI_TEXT" ]; then
+            AI_TEXT="AI diagnosis not available. Please inspect the failed job log directly."
+          fi
+
+          {
+            echo "## Pipeline Failed: ${FAILED_JOB_NAME:-unknown job}"
+            echo "### AI Diagnosis & Recommended Fix"
+            echo "$AI_TEXT"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+          {
+            echo "diagnosis<<EOF_AI_DIAGNOSIS"
+            echo "$AI_TEXT"
+            echo "EOF_AI_DIAGNOSIS"
+          } >> "$GITHUB_OUTPUT"
+
+  # ===========================================================================
+  # AWS SNS NOTIFICATION: Sends email report on Success AND Failure
+  # ===========================================================================
+  notify-sns:
+    name: Send SNS Notification
+    needs:
+      - code-quality-and-test
+      - build-scan-push
+      - update-gitops-manifest
+      - ai-failure-doctor
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Configure AWS Credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Publish Notification to AWS SNS
+        env:
+          R_TEST: ${{ needs.code-quality-and-test.result }}
+          R_BUILD: ${{ needs.build-scan-push.result }}
+          R_GITOPS: ${{ needs.update-gitops-manifest.result }}
+          IMAGE_TAG: ${{ needs.build-scan-push.outputs.image_tag }}
+          AI_DIAGNOSIS: ${{ needs.ai-failure-doctor.outputs.diagnosis }}
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+          ACTOR: ${{ github.actor }}
+          REPO: ${{ github.repository }}
+          BRANCH: ${{ github.ref_name }}
+          SHA: ${{ github.sha }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          label() {
+            case "$1" in
+              success)   echo "PASSED" ;;
+              failure)   echo "FAILED" ;;
+              skipped)   echo "NOT RUN" ;;
+              cancelled) echo "CANCELLED" ;;
+              *)         echo "$1" ;;
+            esac
+          }
+
+          ALL="$R_TEST $R_BUILD $R_GITOPS"
+          if [[ "$ALL" == *failure* ]]; then
+            STATUS="FAILED"
+          elif [[ "$ALL" == *cancelled* ]]; then
+            STATUS="CANCELLED"
+          else
+            STATUS="SUCCEEDED"
+          fi
+
+          SHORT_SHA="${SHA::7}"
+          COMMIT_TITLE=$(echo "$COMMIT_MSG" | head -n 1 | cut -c1-120)
+          NOW=$(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          SUBJECT="[${STATUS}] ${REPO##*/} CI/CD - ${BRANCH} (${SHORT_SHA})"
+
+          if [ "$STATUS" = "SUCCEEDED" ]; then
+            NEXT="Argo CD is currently syncing the new image to your Kubernetes cluster with Blue/Green zero-downtime rollout."
+          else
+            NEXT="Pipeline encountered an error. Live production server was NOT affected.
+
+          AI Diagnosis:
+          ${AI_DIAGNOSIS:-Not available for this run.}"
+          fi
+
+          cat > message.txt <<EOF
+          ==================================================
+          CI/CD PRODUCTION PIPELINE REPORT
+          ==================================================
+
+          Overall Status : ${STATUS}
+          Repository     : ${REPO}
+          Branch         : ${BRANCH}
+          Triggered By   : ${ACTOR}
+          Commit         : ${SHORT_SHA} - ${COMMIT_TITLE}
+          Completed At   : ${NOW}
+
+          STAGE RESULTS
+          --------------------------------------------------
+          1. Code Integrity & Syntax Check   : $(label "$R_TEST")
+          2. Build, Scan & Push to ECR       : $(label "$R_BUILD")
+          3. GitOps Manifest Update          : $(label "$R_GITOPS")
+
+          DEPLOYMENT DETAILS
+          --------------------------------------------------
+          Image          : ${ECR_REGISTRY}/${ECR_REPOSITORY}:${IMAGE_TAG:-N/A}
+          Strategy       : Blue/Green (Argo Rollouts)
+
+          NEXT STEPS
+          --------------------------------------------------
+          ${NEXT}
+
+          VIEW RUN LOGS
+          --------------------------------------------------
+          ${RUN_URL}
+
+          Automated alert from GitHub Actions.
+          EOF
+
+          aws sns publish \
+            --region "$AWS_REGION" \
+            --topic-arn "$SNS_TOPIC_ARN" \
+            --subject "$SUBJECT" \
+            --message file://message.txt
