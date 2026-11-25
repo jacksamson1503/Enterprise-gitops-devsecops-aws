@@ -7,6 +7,10 @@ on:
     paths:
       - '**'
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   pr-staging-checks:
     name: Staging Validation & Health Check
@@ -22,34 +26,60 @@ jobs:
           node-version: '20'
 
       - name: 3. Verify Required Production Pages Exist
+        id: pages_check
         run: |
           echo "Verifying all essential e-commerce pages..."
           REQUIRED_FILES=("index.html" "cart.html" "checkout.html" "processing.html" "confirmation.html" "login.html")
           for file in "${REQUIRED_FILES[@]}"; do
             if [ ! -f "$file" ]; then
-              echo "ERROR: Critical production page $file is missing!"
+              echo "ERROR: Critical production page $file is missing!" > error.log
+              cat error.log
               exit 1
             fi
             echo "PASS: $file exists."
           done
 
       - name: 4. Validate JavaScript ES6 Modules Syntax
+        id: js_check
         run: |
           echo "Testing JavaScript files for syntax errors..."
           for jsfile in js/*.js; do
-            node --check "$jsfile"
+            node --check "$jsfile" 2>> error.log
             echo "PASS: $jsfile syntax is valid."
           done
 
       - name: 5. Test Docker Container Build
+        id: docker_check
         run: |
-          echo "Building test container to ensure image builds cleanly..."
-          docker build -t kilnclay-staging-test:${{ github.sha }} .
+          echo "Building test container..."
+          docker build -t kilnclay-staging-test:${{ github.sha }} . 2>> error.log
           echo "PASS: Docker image built successfully."
 
-      - name: 6. Staging Pass Signal
+      # =========================================================================
+      # FREE AI FAILURE: Runs only if any check above fails!
+      # =========================================================================
+      - name: 6. AI Diagnosis & Comment on PR
+        if: failure() && env.GEMINI_API_KEY != ''
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "=========================================================="
-          echo "SUCCESS: ALL PR STAGING VALIDATIONS PASSED!"
-          echo "This Pull Request is verified and ready for merge into main."
-          echo "=========================================================="
+          echo "Capturing failure context..."
+          LOG_CONTENT=$(tail -n 30 error.log 2>/dev/null || echo "A step failed without explicit error.log.")
+          
+          # Clean log of any potential sensitive strings
+          CLEAN_LOG=$(echo "$LOG_CONTENT" | sed 's/[A-Za-z0-9_-]\{20,\}/[REDACTED]/g')
+
+          PROMPT="You are a DevOps expert. A GitHub Actions PR build failed with this error: $CLEAN_LOG. In 2 short sentences, explain the exact error and give the code command to fix it."
+
+          # Call Google Gemini Free API
+          AI_RESPONSE=$(curl -s "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$GEMINI_API_KEY" \
+            -H 'Content-Type: application/json' \
+            -d "{\"contents\": [{\"parts\": [{\"text\": \"$PROMPT\"}]}]}" | jq -r '.candidates[0].content.parts[0].text' 2>/dev/null || echo "Build failed. Please inspect the logs above.")
+
+          # Post Comment to the Pull Request
+          gh pr comment ${{ github.event.pull_request.number }} --body "### AI Build Doctor Report
+             **Build failed on this Pull Request.**
+          
+          **AI Diagnosis & Recommended Fix:**
+          $AI_RESPONSE"
