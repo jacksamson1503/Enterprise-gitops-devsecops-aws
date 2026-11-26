@@ -199,19 +199,4 @@ kilnclay/
 └── package.json                # Project descriptor & test definitions
 ```
 
----
 
-## Recommended Repository Renaming
-
-To reflect the scope of this project on your GitHub profile and resume, rename the repository under **Settings $\rightarrow$ General $\rightarrow$ Repository name** to one of the following:
-
-* **`enterprise-devops-gitops-ai-platform`** *(Recommended)*
-* **`aws-gitops-bluegreen-devsecops`**
-* **`cloudnative-ecommerce-devops-platform`**
-
----
-
-## License & Author
-
-* **Author:** Jack Samson C ([@jacksamson1503](https://github.com/jacksamson1503))
-* **License:** MIT
