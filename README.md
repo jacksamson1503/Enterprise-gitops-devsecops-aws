@@ -26,10 +26,10 @@ An end-to-end, enterprise-grade cloud-native e-commerce platform and DevSecOps e
       [ PR Quality Gate ]                     [ Main CI/CD Pipeline ]
       • Linting & Syntax Tests                • 1. Code Integrity Tests
       • Docker Build Validation               • 2. Build Docker Container
-      • 🤖 Gemini AI Error Diagnostics        • 3. Trivy Security Scan (Block Critical)
+      • Gemini AI Error Diagnostics           • 3. Trivy Security Scan (Block Critical)
                                               • 4. Push Image to Amazon ECR
                                               • 5. GitOps Auto-Promote (rollout.yaml)
-                                              • 6. 🤖 Gemini AI Failure Analysis
+                                              • 6. Gemini AI Failure Analysis
                                               • 7. AWS SNS Real-Time Notifications
                                                            │
                                                            ▼
